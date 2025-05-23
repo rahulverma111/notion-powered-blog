@@ -5,6 +5,7 @@ import { HorizontalBorder } from "@/components/HorizontalBorder";
 import { getAuthors, getPosts } from "@/lib/notion";
 import { Post } from "@/lib/types";
 import Link from "next/link";
+import PaginationComponent from "@/components/PaginationComponent";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -19,12 +20,14 @@ async function getStaticProps() {
     },
   };
 }
+
 export default async function Home() {
   const { props } = await getStaticProps();
   const { posts, authors } = props;
 
   return (
     <main>
+      <PaginationComponent />
       <CustomTabsClientWrapper posts={posts} />
     </main>
   );

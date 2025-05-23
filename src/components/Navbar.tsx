@@ -1,7 +1,9 @@
+import Logo from "./ui/logo";
+
 export default function Navbar() {
   return (
-    <div className="bg-brand-0 h-10 flex justify-start items-center px-3">
-      <h1>Logo</h1>
+    <div className="bg-black h-12 flex justify-start items-center px-4">
+      <Logo />
     </div>
   );
 }

@@ -1,23 +1,24 @@
 import { H1 } from "./Heading";
 import { D2, D3 } from "./Description";
 import { AuthorProfile } from "./AuthorCard";
+import Image from "next/image";
 
 type BlogPostProps = {
-  title: string;
-  description: string;
-  authorName: string;
-  authorAvatarUrl: string;
-  publishedDate: string;
-  imageUrl: string;
+	title: string;
+	description: string;
+	authorName: string;
+	authorAvatarUrl: string;
+	publishedDate: string;
+	imageUrl: string;
 };
 
 export default function BlogPost({
-  title,
-  description,
-  authorName,
-  authorAvatarUrl,
-  publishedDate,
-  imageUrl,
+	title,
+	description,
+	authorName,
+	authorAvatarUrl,
+	publishedDate,
+	imageUrl,
 }: BlogPostProps) {
   return (
     <div className="flex hover:cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-md hover:border-gray-300  flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card">
@@ -32,13 +33,15 @@ export default function BlogPost({
         </div>
       </div>
 
-      <div className="w-full md:w-48 h-[170px]">
-        <img
-          src={imageUrl}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-    </div>
-  );
+			<div className="w-full md:w-48 h-[170px]">
+				<Image
+					src={imageUrl}
+					alt={title}
+					className="w-full h-full object-cover"
+					width={200}
+					height={200}
+				/>
+			</div>
+		</div>
+	);
 }

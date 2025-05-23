@@ -1,4 +1,5 @@
 import BlogPost from "@/components/BlogPost";
+import CustomTabsClientWrapper from "@/components/CustomTabsClientWrapper";
 import CustomTabs from "@/components/CustomTabs";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
 import { getAuthors, getPosts } from "@/lib/notion";
@@ -9,8 +10,8 @@ export const revalidate = 3600; // Revalidate every hour
 
 async function getStaticProps() {
   const { posts } = await getPosts({ pageSize: 10 });
-
   const { authors } = await getAuthors({ pageSize: 100 });
+
   return {
     props: {
       posts,
@@ -24,15 +25,15 @@ export default async function Home() {
 
   return (
     <main>
-      <CustomTabs
+      {/* <CustomTabs
         outerWrapperClass={""}
         tabsData={[
           { title: "New-in", component: "" },
           { title: "Writers", component: "" },
         ]}
-      />
-      {JSON.stringify(authors)}
+      /> */}
 
+      <CustomTabsClientWrapper posts={posts} />
       <div className="flex flex-col gap-y-5">
         {posts.map((post: Post) => (
           <Link key={post.id} href={`/${post.id}`} className="p-4">
@@ -47,6 +48,7 @@ export default async function Home() {
             />
             {posts.indexOf(post) !== posts.length - 1 && <HorizontalBorder />}
           </Link>
+          // </div>
         ))}
       </div>
     </main>

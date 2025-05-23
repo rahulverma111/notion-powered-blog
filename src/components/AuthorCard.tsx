@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { H2 } from "./Heading";
 import { SH2 } from "./Subheading";
+import { D3 } from "./Description";
 
 interface AuthorCardProps {
   heading: string;
@@ -47,19 +48,19 @@ const AuthorCardLarge: React.FC<AuthorCardProps> = ({
   blogCount = 126,
 }: AuthorCardProps) => {
   return (
-    <div className="flex gap-4 items-start">
-      <div>
-        <Avatar className="w-20 h-20">
+    <div className="flex gap-4 items-start p-3">
+      <div className="pt-2">
+        <Avatar className="w-10 h-10">
           <AvatarImage src={imageUrl || "https://github.com/shadcn.png"} />
           <AvatarFallback></AvatarFallback>
         </Avatar>
       </div>
-      <div>
-        <H2 styles={"text-base lg:text-2xl capitalize"}>{heading}</H2>
-        <SH2 styles={"text-xs lg:text-lg capitalize"}>{subheading}</SH2>
-        <SH2
-          styles={"text-xs lg:text-sm capitalize"}
-        >{`Published ${"  "} ${blogCount} blogs`}</SH2>
+      <div className="flex flex-col gap-y-2">
+        <div>
+          <H2>{heading}</H2>
+          <SH2>{subheading}</SH2>
+        </div>
+        <D3>{`Published ${"  "} ${blogCount} blogs`}</D3>
       </div>
     </div>
   );

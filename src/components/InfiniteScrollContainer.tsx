@@ -3,7 +3,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export interface InfiniteScrollContainerInterface {
   list: Array<any>;
-  children?: React.ReactNode;
   length?: any;
   next?: any;
   hasMore?: boolean;
@@ -11,7 +10,6 @@ export interface InfiniteScrollContainerInterface {
 
 const InfiniteScrollContainer: React.FC<InfiniteScrollContainerInterface> = ({
   list,
-  children,
   hasMore = true,
   length,
   next,
@@ -24,7 +22,7 @@ const InfiniteScrollContainer: React.FC<InfiniteScrollContainerInterface> = ({
       loader={<h4>Loading...</h4>}
     >
       {list.map((data: any, index: number) => (
-        <div>{JSON.stringify(data)}</div>
+        <div key={index}>{JSON.stringify(data)}</div>
       ))}
     </InfiniteScroll>
   );

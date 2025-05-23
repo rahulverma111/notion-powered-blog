@@ -28,7 +28,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`font-[Courier_Prime] antialiased`}>
 				<Navbar />
-				<div className="max-w-4xl mx-auto">{children}</div>
+				<div className="max-w-4xl mx-auto overflow-hidden">{children}</div>
 				<Footer />
 			</body>
 		</html>

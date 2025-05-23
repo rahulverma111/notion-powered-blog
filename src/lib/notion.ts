@@ -81,7 +81,6 @@ export async function getPosts({
 			paginatedResponse.results
 				.filter(isFullPage) // Only pass full Page objects
 				.map(async (page: PageObjectResponse) => {
-					console.log("page==>", page);
 					return await pageToPostTransformer(page, false, allAuthors.authors);
 				})
 		);
@@ -216,7 +215,6 @@ async function pageToPostTransformer(
 	) {
 		const authorId = properties.Author.relation[0].id;
 		const authorInfo = allAuthors.find((a) => a.id === authorId);
-		console.log("authorInfo==>", authorInfo);
 		if (authorInfo) {
 			author = {
 				id: authorInfo.id,

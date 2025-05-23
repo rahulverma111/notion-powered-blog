@@ -31,8 +31,7 @@ export default async function Home() {
 
       <div className="flex flex-col gap-y-5">
         {posts.map((post: Post) => (
-          // <div className="p-4" key={post.id} onClick={handleBlogClick}>
-          <Link key={post.id} href={`/blogs/${post.id}`} className="p-4">
+          <Link key={post.id} href={`/${post.id}`} className="p-4">
             <BlogPost
               title={post.title}
               // description={post.excerpt}

@@ -27,7 +27,7 @@ export default function CustomTabs({
             key={index}
             onClick={() => setActiveIndex(index)}
             className={cn(
-              "relative flex-1 text-sm font-medium py-2",
+              "relative flex-1 text-md font-medium py-3",
               activeIndex === index ? "font-semibold" : "",
               "transition-colors"
             )}

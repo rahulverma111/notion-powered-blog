@@ -28,7 +28,7 @@ export default function BlogPost({
         </div>
         <div className="flex flex-col gap-y-2">
           <H1>{title}</H1>
-          <D2>{description}</D2>
+          <D2 styles="text-sm md:text-base">{description}</D2>
           <D3>{publishedDate}</D3>
         </div>
       </div>

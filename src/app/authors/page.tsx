@@ -1,7 +1,15 @@
+import CustomTabs from "@/components/CustomTabs";
+
 export default function Authors() {
   return (
-    <>
-      <h2>This is Authours Page!!!</h2>
-    </>
+    <div className="">
+      <CustomTabs
+        outerWrapperClass={""}
+        tabsData={[
+          { title: "New-in", component: "" },
+          { title: "Writers", component: "" },
+        ]}
+      />
+    </div>
   );
 }

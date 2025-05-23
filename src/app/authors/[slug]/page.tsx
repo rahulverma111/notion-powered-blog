@@ -3,99 +3,101 @@ import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
-import { getPosts } from "@/lib/notion";
+import { getAuthors, getAuthorDetails, getAuthorPosts } from "@/lib/notion";
+import { log } from "console";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import { Post } from "@/lib/types";
+
+export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-  const posts = await getPosts({ pageSize: 10 });
-
-  return posts.posts.map((post: { id: string }) => ({
-    slug: post.id,
+  const { authors } = await getAuthors({ pageSize: 100 });
+  return authors.map((author) => ({
+    slug: author.id,
   }));
 }
 
-export default function Page({}: { params: Promise<{ slug: string }> }) {
-  const authorDetails = {
-    authorName: "Avi Rajput",
-    description: "Writing is my passion which gives me wings to fly!",
-  };
+export default async function AuthorPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  try {
+    const { slug } = await params;
+    const author = await getAuthorDetails(slug);
 
-  return (
-    <>
-      <div className="max-w-full px-6   lg:max-w-4xl lg:mx-auto mb-6">
-        <div className="w-full flex flex-col items-center space-y-3 my-8 ">
-          <div className="h-[200px] w-[200px] rounded-full overflow-hidden bg-gray-600">
-            {/* <img
-              src="https://picsum.photos/id/237/200/300"
-              className="w-full h-full object-cover"
-              alt="Rounded"
-            /> */}
-          </div>
+    if (!author) {
+      notFound();
+    }
 
-          <H1 styles="">{authorDetails?.authorName}</H1>
-          <D1 styles="text-center">{authorDetails?.description}</D1>
-        </div>
-        <HorizontalBorder />
-        <div>
-          <H1 styles="my-4">Latest Articles by Rahul</H1>
-          <div className="flex flex-col space-y-4">
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />{" "}
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
+    const { posts } = await getAuthorPosts(slug);
+
+    return (
+      <div className="container py-8 px-16">
+        <div className="flex items-center gap-8 mb-12">
+          {author.image && (
+            <div className="w-32 h-32 relative rounded-full overflow-hidden">
+              <Image
+                src={author.image}
+                alt={author.name}
+                fill
+                className="object-cover w-full"
+              />
+            </div>
+          )}
+          <div>
+            <h1 className="text-4xl font-bold mb-2">{author.name}</h1>
+            {author.bio && <p className="text-gray-600">{author.bio}</p>}
+            {author.email && (
+              <a
+                href={`mailto:${author.email}`}
+                className="text-blue-600 hover:underline mt-2 inline-block"
+              >
+                {author.email}
+              </a>
+            )}
           </div>
         </div>
 
-        <div className="space-y-2 mt-20">
-          <H1>More Authors</H1>
-
-          <div className="grid grid-cols-1 space-y-4 sm:space-y-0 sm:grid-cols-2 mt-8">
-            <AuthorCardCompact
-              heading="Dummy"
-              subheading="fgh"
-              imageUrl=""
-              blogCount={1}
-            />
-            <AuthorCardCompact
-              heading="Dummy"
-              subheading="fgh"
-              imageUrl=""
-              blogCount={1}
-            />
-          </div>
+        <div className="flex flex-col gap-y-4">
+          {posts.map((post: Post) => (
+            <Link
+              key={post.id}
+              href={`/${post.id}`}
+              className="group block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              {post.coverImage && (
+                <div className="relative h-48">
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill
+                    className="w-full object-contain group-hover:scale-105 transition-transform duration-200"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">
+                  {post.title}
+                </h2>
+                <time className="text-sm text-gray-500">
+                  {new Date(post.date).toLocaleDateString()}
+                </time>
+                {post.excerpt && (
+                  <p className="mt-2 text-gray-600 line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                )}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
-    </>
-  );
+    );
+  } catch (error) {
+    console.error("Error fetching author:", error);
+    notFound();
+  }
 }

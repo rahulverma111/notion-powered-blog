@@ -3,12 +3,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { H2 } from "./Heading";
 import { SH2 } from "./Subheading";
 import { D3 } from "./Description";
+import Link from "next/link";
 
 interface AuthorCardProps {
   heading: string;
   subheading?: string;
   imageUrl: string;
   blogCount?: number;
+  uuid: string;
 }
 
 interface AuthorProfileProps {
@@ -21,9 +23,10 @@ const AuthorCardCompact: React.FC<AuthorCardProps> = ({
   subheading = "Writing is my passion which gives me wings to fly!",
   imageUrl = "",
   blogCount = 126,
+  uuid,
 }: AuthorCardProps) => {
   return (
-    <div className="flex gap-4 items-start">
+    <Link href={`authors/${uuid}`} className="flex gap-4 items-start">
       <div>
         <Avatar className="w-10 lg:w-16 h-10 lg:h-16">
           <AvatarImage src={imageUrl || "https://github.com/shadcn.png"} />
@@ -37,7 +40,7 @@ const AuthorCardCompact: React.FC<AuthorCardProps> = ({
           styles={"text-xs lg:text-sm capitalize"}
         >{`Published ${"  "} ${blogCount} blogs`}</SH2>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -46,9 +49,10 @@ const AuthorCardLarge: React.FC<AuthorCardProps> = ({
   subheading = "Writing is my passion which gives me wings to fly!",
   imageUrl = "",
   blogCount = 126,
+  uuid,
 }: AuthorCardProps) => {
   return (
-    <div className="flex gap-4 items-start p-3">
+    <Link href={`authors/${uuid}`} className="flex gap-4 items-start p-3">
       <div className="pt-2">
         <Avatar className="w-10 h-10">
           <AvatarImage src={imageUrl || "https://github.com/shadcn.png"} />
@@ -62,7 +66,7 @@ const AuthorCardLarge: React.FC<AuthorCardProps> = ({
         </div>
         <D3>{`Published ${"  "} ${blogCount} blogs`}</D3>
       </div>
-    </div>
+    </Link>
   );
 };
 

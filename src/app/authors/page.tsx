@@ -1,7 +1,5 @@
+import CustomTabs from "@/components/CustomTabs";
+
 export default function Authors() {
-  return (
-    <>
-      <h2>This is Authours Page!!!</h2>
-    </>
-  );
+  return <></>;
 }

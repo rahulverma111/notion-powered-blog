@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface CustomTabsProps {
   outerWrapperClass?: string;
@@ -19,15 +20,16 @@ export default function CustomTabs({
 
   return (
     <div className={`${outerWrapperClass}`}>
-      {/* Tab buttons */}
       <div className="space-x-4 border-b border-black mb-4 pl-2">
         {tabsData.map((tab, index) => (
           <button
             key={index}
             onClick={() => setActiveIndex(index)}
-            className={`relative flex-1 text-sm font-medium py-2 text-gray-500 ${
-              activeIndex === index ? "font-semibold" : ""
-            } transition-colors`}
+            className={cn(
+              "relative flex-1 text-sm font-medium py-2",
+              activeIndex === index ? "font-semibold" : "",
+              "transition-colors"
+            )}
           >
             {tab.title}
             {activeIndex === index && (
@@ -41,7 +43,6 @@ export default function CustomTabs({
         ))}
       </div>
 
-      {/* Tab content */}
       <div className="relative min-h-[100px]">
         <AnimatePresence mode="wait">
           <motion.div

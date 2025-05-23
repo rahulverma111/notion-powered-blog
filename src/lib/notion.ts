@@ -88,7 +88,7 @@ export async function getPosts({
         start_cursor = paginatedResponse.next_cursor;
       }
     }
-
+    const allAuthors = await getAuthors({ pageSize: 100 });
     const posts = await Promise.all(
       allPagesResponse
         .flat()

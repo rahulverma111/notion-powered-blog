@@ -1,7 +1,7 @@
 import React from "react";
 import { Label } from "./ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import Heading from "./Heading";
+import { H1 } from "./Heading";
 import Subheading from "./Subheading";
 
 interface AuthorCardProps {
@@ -19,7 +19,7 @@ export default function AuthorCard({
 }: AuthorCardProps) {
   return (
     <div>
-      <Heading headerText={heading} />
+      <H1>{heading}</H1>
       <Subheading headerText={subheading} />
       <Avatar>
         <AvatarImage src="https://github.com/shadcn.png" />

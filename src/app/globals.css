@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --color-brand-0: var(--brand-0);
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
@@ -64,6 +65,8 @@
 
 @layer base {
   :root {
+    --brand-0: #e2e2e2;
+
     --background: 0 0% 100%;
 
     --foreground: 0 0% 3.9%;

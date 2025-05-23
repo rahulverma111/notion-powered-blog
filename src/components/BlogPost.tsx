@@ -20,7 +20,7 @@ export default function BlogPost({
   imageUrl,
 }: BlogPostProps) {
   return (
-    <div className="flex flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card">
+    <div className="flex hover:cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-md hover:border-gray-300  flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card">
       <div className="flex-1">
         <div className="pb-4">
           <AuthorProfile authorName={authorName} imageUrl={authorAvatarUrl} />

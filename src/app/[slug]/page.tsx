@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-  const posts: any = await getPosts({ pageSize: 10 });
-
+  const posts = await getPosts({ pageSize: 10 });
   return posts.posts.map((post: { id: string }) => ({
     slug: post.id,
   }));

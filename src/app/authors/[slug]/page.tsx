@@ -6,10 +6,8 @@ import { HorizontalBorder } from "@/components/HorizontalBorder";
 import { getPosts } from "@/lib/notion";
 
 export async function generateStaticParams() {
-  // eslint-disable-next-line
-  const posts: any = await getPosts({ pageSize: 10 });
+  const posts = await getPosts({ pageSize: 10 });
 
-  // eslint-disable-next-line
   return posts.posts.map((post: { id: string }) => ({
     slug: post.id,
   }));

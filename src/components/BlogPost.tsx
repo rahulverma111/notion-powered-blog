@@ -5,10 +5,10 @@ import { AuthorProfile } from "./AuthorCard";
 type BlogPostProps = {
   title: string;
   description: string;
-  authorName: string;
-  authorAvatarUrl: string;
-  publishedDate: string;
-  imageUrl: string;
+  authorName: string | undefined;
+  authorAvatarUrl: string | undefined | null;
+  publishedDate: string | undefined;
+  imageUrl: string | undefined | null;
 };
 
 export default function BlogPost({

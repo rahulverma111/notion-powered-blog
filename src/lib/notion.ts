@@ -35,6 +35,7 @@ export async function getPosts({
     //     },
     //   ],
     // }
+
     const filter: QueryDatabaseParameters["filter"] = {
       and: [],
     };
@@ -51,14 +52,11 @@ export async function getPosts({
 
     // Get total count first
     const databaseId = process.env.NOTION_POSTS_DB_ID!;
-    console.log("databaseId==>", databaseId);
     const response = await notion.databases.query({
       database_id: databaseId,
       // filter,
       page_size: 100, // Max to get a good count
     });
-
-    console.log("response==>", response);
 
     const total = response.results.length;
 
@@ -77,17 +75,16 @@ export async function getPosts({
         page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
     });
 
-    console.log("paginatedResponse====>", paginatedResponse);
+    const allAuthors = await getAuthors({ pageSize: 100 });
 
     const posts = await Promise.all(
       paginatedResponse.results
         .filter(isFullPage) // Only pass full Page objects
         .map(async (page: PageObjectResponse) => {
-          return await pageToPostTransformer(page);
+          console.log("page==>", page);
+          return await pageToPostTransformer(page, false, allAuthors.authors);
         })
     );
-
-    console.log("posts==>", posts);
 
     return {
       posts,
@@ -109,22 +106,24 @@ export async function getPostDetails(id: string) {
       const { html: contentHtml } = await NotionPageToHtml.convert(
         `https://www.notion.so/${id.replace(/-/g, "")}`,
         {
-          excludeCSS: false, // include CSS (default)
-          excludeMetadata: true, // optionally exclude extra <meta> tags
-          excludeScripts: false, // optionally exclude scripts
-          excludeHeaderFromBody: true, // removes title/cover/icon from body
-          excludeTitleFromHead: true, // prevents <title> in head
+          excludeCSS: false,
+          excludeMetadata: true,
+          excludeScripts: false,
+          excludeHeaderFromBody: true,
+          excludeTitleFromHead: true,
         }
       );
 
-      const post = await pageToPostTransformer(page, false); // false because we’re handling content manually
+      // Get all authors to find the post's author
+      const { authors } = await getAuthors({ pageSize: 100 });
+
+      const post = await pageToPostTransformer(page, false, authors);
       post.content = contentHtml;
 
       return post;
     }
   } catch (error) {
     console.error("Error fetching post details:", error);
-    throw error;
   }
 }
 
@@ -180,7 +179,8 @@ export async function getAuthors({
 
 async function pageToPostTransformer(
   page: PageObjectResponse,
-  includeContent = false
+  includeContent = false,
+  allAuthors?: { id: string; name: string; image: string | null }[]
 ): Promise<Post> {
   const { properties } = page;
 
@@ -209,12 +209,30 @@ async function pageToPostTransformer(
       ? properties.Slug.rich_text[0]?.plain_text || slugify(title)
       : slugify(title);
 
+  // Get author information from relation
+  let author;
+  if (
+    properties.Author?.type === "relation" &&
+    properties.Author.relation.length > 0 &&
+    allAuthors
+  ) {
+    const authorId = properties.Author.relation[0].id;
+    const authorInfo = allAuthors.find((a) => a.id === authorId);
+    if (authorInfo) {
+      author = {
+        id: authorInfo.id,
+        name: authorInfo.name,
+        image: authorInfo.image,
+      };
+    }
+  }
+
+  // Get cover image from properties
   let coverImage: string | null = null;
-  if (page.cover) {
-    if (page.cover.type === "external") {
-      coverImage = page.cover.external.url;
-    } else if (page.cover.type === "file") {
-      coverImage = page.cover.file.url;
+  if (properties.Cover?.type === "files" && properties.Cover.files.length > 0) {
+    const file = properties.Cover.files[0];
+    if (file.type === "file") {
+      coverImage = file.file.url;
     }
   }
 
@@ -227,6 +245,7 @@ async function pageToPostTransformer(
     slug,
     coverImage,
     content: "",
+    author,
   };
 
   if (includeContent) {

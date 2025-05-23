@@ -3,8 +3,25 @@ import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
+import { getPosts } from "@/lib/notion";
 
-export default function Page() {
+export async function generateStaticParams() {
+  // eslint-disable-next-line
+  const posts: any = await getPosts({ pageSize: 10 });
+
+  // eslint-disable-next-line
+  return posts.posts.map((post: { id: string }) => ({
+    slug: post.id,
+  }));
+}
+
+export default function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  console.log("params here---->", params);
+
   const authorDetails = {
     authorName: "Avi Rajput",
     description: "Writing is my passion which gives me wings to fly!",

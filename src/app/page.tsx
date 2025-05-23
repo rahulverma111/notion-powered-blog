@@ -8,7 +8,7 @@ import Link from "next/link";
 export const revalidate = 3600; // Revalidate every hour
 
 async function getStaticProps() {
-  const { posts } = await getPosts({ pageSize: 10 });
+  const { posts } = await getPosts({ pageSize: 100 });
   const { authors } = await getAuthors({ pageSize: 100 });
 
   return {

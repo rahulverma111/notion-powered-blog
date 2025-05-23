@@ -55,39 +55,50 @@ export async function getPosts({
     const response = await notion.databases.query({
       database_id: databaseId,
       // filter,
-      page_size: 100, // Max to get a good count
+      page_size: pageSize, // Max to get a good count
     });
 
-    console.log("response==>", response);
+    // console.log("response==>", response);
 
     const total = response.results.length;
 
     // Now get the paginated results
-    const paginatedResponse = await notion.databases.query({
-      database_id: databaseId,
-      // filter,
-      sorts: [
-        {
-          property: "Created time",
-          direction: "ascending",
-        },
-      ],
-      page_size: pageSize,
-      start_cursor:
-        page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
-    });
 
-    console.log("paginatedResponse====>", paginatedResponse);
+    const allPagesResponse = [];
+    let start_cursor: string | undefined = undefined;
+
+    while (total) {
+      const paginatedResponse = await notion.databases.query({
+        database_id: databaseId,
+        // filter,
+        sorts: [
+          {
+            property: "Created time",
+            direction: "ascending",
+          },
+        ],
+        page_size: pageSize,
+        start_cursor: start_cursor,
+      });
+
+      allPagesResponse.push(paginatedResponse?.results);
+      if (!paginatedResponse?.next_cursor) {
+        break;
+      } else {
+        start_cursor = paginatedResponse.next_cursor;
+      }
+    }
 
     const posts = await Promise.all(
-      paginatedResponse.results
-        .filter(isFullPage) // Only pass full Page objects
+      allPagesResponse
+        .flat()
+        .filter(isFullPage) // Flatten and filter full Page objects
         .map(async (page: PageObjectResponse) => {
           return await pageToPostTransformer(page);
         })
     );
 
-    console.log("posts==>", posts);
+    // console.log("posts==>", posts);
 
     return {
       posts,
@@ -144,21 +155,33 @@ export async function getAuthors({
       page_size: 100,
     });
     const total = response.results.length;
-    const paginatedResponse = await notion.databases.query({
-      database_id: databaseId,
-      sorts: [
-        {
-          property: "Created time",
-          direction: "ascending",
-        },
-      ],
-      page_size: pageSize,
-      start_cursor:
-        page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
-    });
+    const allPagesResponse = [];
+    let start_cursor: string | undefined = undefined;
+    while (total) {
+      const paginatedResponse = await notion.databases.query({
+        database_id: databaseId,
+        // filter,
+        sorts: [
+          {
+            property: "Created time",
+            direction: "ascending",
+          },
+        ],
+        page_size: pageSize,
+        start_cursor: start_cursor,
+      });
+
+      allPagesResponse.push(paginatedResponse?.results);
+      if (!paginatedResponse?.next_cursor) {
+        break;
+      } else {
+        start_cursor = paginatedResponse.next_cursor;
+      }
+    }
 
     const authors = await Promise.all(
-      paginatedResponse.results
+      allPagesResponse
+        .flat()
         .filter(isFullPage)
         .map(async (page: PageObjectResponse) => {
           return await pageToAuthorTransformer(page);

@@ -51,14 +51,12 @@ export async function getPosts({
 
 		// Get total count first
 		const databaseId = process.env.NOTION_POSTS_DB_ID!;
-		console.log("databaseId==>", databaseId);
+
 		const response = await notion.databases.query({
 			database_id: databaseId,
 			// filter,
 			page_size: 100, // Max to get a good count
 		});
-
-		console.log("response==>", response);
 
 		const total = response.results.length;
 
@@ -77,8 +75,6 @@ export async function getPosts({
 				page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
 		});
 
-		console.log("paginatedResponse====>", paginatedResponse);
-
 		const posts = await Promise.all(
 			paginatedResponse.results
 				.filter(isFullPage) // Only pass full Page objects
@@ -86,8 +82,6 @@ export async function getPosts({
 					return await pageToPostTransformer(page);
 				})
 		);
-
-		console.log("posts==>", posts);
 
 		return {
 			posts,

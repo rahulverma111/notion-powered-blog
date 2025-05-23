@@ -28,7 +28,7 @@ export default function CustomTabsClientWrapper({ posts }: Props) {
 			{activeTab === 1 ? (
 				<h1 className="text-2xl font-bold">Writer</h1>
 			) : (
-				<div className="flex flex-col gap-y-5">
+				<div className="flex flex-col gap-y-8">
 					{posts.map((post: Post) => (
 						<Link key={post.id} href={`/blogs/${post.id}`} className="p-4">
 							<BlogPost

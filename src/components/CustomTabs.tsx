@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 interface CustomTabsProps {
   outerWrapperClass?: string;
@@ -19,17 +20,21 @@ export default function CustomTabs({
   activeIndex,
   setActiveIndex,
 }: CustomTabsProps) {
+  const router = useRouter();
+
   return (
     <div className={`${outerWrapperClass}`}>
       <div className="space-x-4 border-b border-black mb-4 pl-2">
         {tabsData.map((tab, index) => (
           <button
             key={index}
-            onClick={() => setActiveIndex(index)}
+            onClick={() => {
+              setActiveIndex(index);
+            }}
             className={cn(
               "relative flex-1 text-md font-medium py-3",
               activeIndex === index ? "font-semibold" : "",
-              "transition-colors"
+              "transition-colors cursor-pointer"
             )}
           >
             {tab.title}

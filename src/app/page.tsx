@@ -18,11 +18,11 @@ async function getStaticProps() {
 }
 export default async function Home() {
   const { props } = await getStaticProps();
-  const { posts } = props;
+  const { posts, authors } = props;
 
   return (
     <main>
-      <CustomTabsClientWrapper posts={posts} />
+      <CustomTabsClientWrapper posts={posts} authors={authors} />
     </main>
   );
 }

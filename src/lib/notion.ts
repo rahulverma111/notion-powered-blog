@@ -2,7 +2,7 @@ import { Client } from "@notionhq/client";
 import { NotionToMarkdown } from "notion-to-md";
 import { remark } from "remark";
 import html from "remark-html";
-import type { Post } from "./types";
+import type { Post, Author } from "./types";
 import { slugify } from "./utils";
 import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 import { isFullPage, type PageObjectResponse } from "@notionhq/client";
@@ -16,7 +16,7 @@ const n2m = new NotionToMarkdown({ notionClient: notion });
 
 export async function getPosts({
   pageSize = 25,
-  // page = 1,
+  page = 1,
   tag = null,
 }: {
   pageSize?: number;
@@ -24,18 +24,6 @@ export async function getPosts({
   tag?: string | null;
 }) {
   try {
-    // Build filter conditions
-    // const filter: any = {
-    //   and: [
-    //     {
-    //       property: "Status",
-    //       checkbox: {
-    //         equals: true,
-    //       },
-    //     },
-    //   ],
-    // }
-
     const filter: QueryDatabaseParameters["filter"] = {
       and: [],
     };
@@ -55,15 +43,12 @@ export async function getPosts({
     const response = await notion.databases.query({
       database_id: databaseId,
       // filter,
-      page_size: pageSize, // Max to get a good count
+      page_size: 100, // Max to get a good count
     });
-
-    // console.log("response==>", response);
 
     const total = response.results.length;
 
     // Now get the paginated results
-
     const allPagesResponse = [];
     let start_cursor: string | undefined = undefined;
 
@@ -88,18 +73,16 @@ export async function getPosts({
         start_cursor = paginatedResponse.next_cursor;
       }
     }
+
     const allAuthors = await getAuthors({ pageSize: 100 });
     const posts = await Promise.all(
       allPagesResponse
         .flat()
         .filter(isFullPage) // Flatten and filter full Page objects
         .map(async (page: PageObjectResponse) => {
-          console.log("page==>", page);
           return await pageToPostTransformer(page, false, allAuthors.authors);
         })
     );
-
-    // console.log("posts==>", posts);
 
     return {
       posts,
@@ -121,24 +104,35 @@ export async function getPostDetails(id: string) {
       const { html: contentHtml } = await NotionPageToHtml.convert(
         `https://www.notion.so/${id.replace(/-/g, "")}`,
         {
-          excludeCSS: false,
-          excludeMetadata: true,
-          excludeScripts: false,
-          excludeHeaderFromBody: true,
-          excludeTitleFromHead: true,
+          excludeCSS: false, // include CSS (default)
+          excludeMetadata: true, // optionally exclude extra <meta> tags
+          excludeScripts: false, // optionally exclude scripts
+          excludeHeaderFromBody: true, // removes title/cover/icon from body
+          excludeTitleFromHead: true, // prevents <title> in head
         }
       );
 
-      // Get all authors to find the post's author
-      const { authors } = await getAuthors({ pageSize: 100 });
-
-      const post = await pageToPostTransformer(page, false, authors);
+      const post = await pageToPostTransformer(page, false); // false because we're handling content manually
       post.content = contentHtml;
 
       return post;
     }
   } catch (error) {
     console.error("Error fetching post details:", error);
+    throw error;
+  }
+}
+
+export async function getAuthorDetails(id: string) {
+  try {
+    const page = await notion.pages.retrieve({ page_id: id });
+    if (page?.object === "page" && "properties" in page) {
+      const author = await pageToAuthorTransformer(page);
+      return author;
+    }
+  } catch (error) {
+    console.error("Error fetching author details:", error);
+    throw error;
   }
 }
 
@@ -197,6 +191,66 @@ export async function getAuthors({
     console.error("Error fetching authors from Notion:", e);
     return {
       authors: [],
+      total: 0,
+    };
+  }
+}
+
+export async function getAuthorPosts(
+  authorId: string,
+  { pageSize = 10, page = 1 } = {}
+) {
+  try {
+    const databaseId = process.env.NOTION_POSTS_DB_ID!;
+
+    // Create filter for author relation
+    const filter: QueryDatabaseParameters["filter"] = {
+      property: "Author",
+      relation: {
+        contains: authorId,
+      },
+    };
+
+    // Get total count first
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter,
+      page_size: 100, // Max to get a good count
+    });
+
+    const total = response.results.length;
+
+    // Get paginated results
+    const paginatedResponse = await notion.databases.query({
+      database_id: databaseId,
+      filter,
+      sorts: [
+        {
+          property: "Created time",
+          direction: "descending",
+        },
+      ],
+      page_size: pageSize,
+      start_cursor:
+        page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
+    });
+
+    const posts = await Promise.all(
+      paginatedResponse.results
+        .filter(isFullPage)
+        .map(async (page: PageObjectResponse) => {
+          return await pageToPostTransformer(page);
+        })
+    );
+
+    return {
+      posts,
+      total,
+    };
+  } catch (error) {
+    console.error("Error fetching author posts:", error);
+    return {
+      posts: [],
       total: 0,
     };
   }
@@ -292,59 +346,40 @@ async function pageToPostTransformer(
   return post;
 }
 
-type Author = {
-  id: string;
-  name: string;
-  bio: string;
-  email: string;
-  posts: string[]; // array of post page IDs
-  image: string | null;
-  createdAt: string;
-};
-
 async function pageToAuthorTransformer(
   page: PageObjectResponse
 ): Promise<Author> {
-  const { properties, created_time } = page;
-
+  const properties = page.properties;
   const name =
-    properties.Name?.type === "title"
-      ? properties.Name.title[0]?.plain_text || "Unnamed"
-      : "Unnamed";
-
-  const bio =
-    properties.Bio?.type === "rich_text"
-      ? properties.Bio.rich_text[0]?.plain_text || ""
+    properties["Name"]?.type === "title"
+      ? properties["Name"].title[0]?.plain_text || ""
       : "";
-
+  const bio =
+    properties["Bio"]?.type === "rich_text"
+      ? properties["Bio"].rich_text[0]?.plain_text || ""
+      : "";
   const email =
-    properties.Email?.type === "email" ? properties.Email.email || "" : "";
-
+    properties["Email"]?.type === "email"
+      ? properties["Email"].email || ""
+      : "";
   const posts =
-    properties.Posts?.type === "relation"
-      ? properties.Posts.relation.map((rel) => rel.id)
+    properties["Posts"]?.type === "relation"
+      ? properties["Posts"].relation.map((post) => post.id)
       : [];
+  const image =
+    properties["Image"]?.type === "files" &&
+    properties["Image"].files[0]?.type === "file"
+      ? properties["Image"].files[0].file.url
+      : null;
+  const createdAt = page.created_time;
 
-  let image: string | null = null;
-  if (properties.Image?.type === "files" && properties.Image.files.length > 0) {
-    const file = properties.Image.files[0];
-
-    if (file.type === "external") {
-      image = file.external.url;
-    } else if (file.type === "file") {
-      image = file.file.url;
-    }
-  }
-
-  const author = {
+  return {
     id: page.id,
     name,
     bio,
     email,
     posts,
     image,
-    createdAt: created_time,
+    createdAt,
   };
-
-  return author;
 }

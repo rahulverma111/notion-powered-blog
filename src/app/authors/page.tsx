@@ -1,4 +1,4 @@
-import CustomTabs from "@/components/CustomTabs";
+// import CustomTabs from "@/components/CustomTabs";
 
 export default function Authors() {
   return <></>;

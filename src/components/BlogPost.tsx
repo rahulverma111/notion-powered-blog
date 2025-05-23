@@ -1,4 +1,4 @@
-import { H1, H2 } from "./Heading";
+import { H1 } from "./Heading";
 import { D2, D3 } from "./Description";
 import { AuthorProfile } from "./AuthorCard";
 

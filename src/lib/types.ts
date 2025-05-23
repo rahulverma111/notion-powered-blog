@@ -7,4 +7,9 @@ export interface Post {
   content: string;
   coverImage: string | null;
   tags: string[];
+  author?: {
+    id: string;
+    name: string;
+    image: string | null;
+  };
 }

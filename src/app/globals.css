@@ -211,4 +211,19 @@
 /* Optional: Apply as default font */
 body {
   font-family: "Courier Prime", monospace !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 10s linear infinite;
 }

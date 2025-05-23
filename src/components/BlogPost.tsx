@@ -1,4 +1,4 @@
-import { H1, H2 } from "./Heading";
+import { H1 } from "./Heading";
 import { D2, D3 } from "./Description";
 import { AuthorProfile } from "./AuthorCard";
 
@@ -20,24 +20,23 @@ export default function BlogPost({
   imageUrl,
 }: BlogPostProps) {
   return (
-    <div className="flex flex-col md:flex-row items-start gap-6 p-6 border rounded-2xl shadow-sm bg-white dark:bg-card">
+    <div className="flex flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card h-[170px]">
       <div className="flex-1">
-        {/* Need to replace with shadcn avatar */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="pb-4">
           <AuthorProfile authorName={authorName} imageUrl={authorAvatarUrl} />
         </div>
-
-        <H1>{title}</H1>
-        <D2>{description}</D2>
-        <D3>{publishedDate}</D3>
+        <div className="flex flex-col gap-y-2">
+          <H1>{title}</H1>
+          <D2>{description}</D2>
+          <D3>{publishedDate}</D3>
+        </div>
       </div>
 
-      {/* Right: Blog Image */}
-      <div className="w-full md:w-48">
+      <div className="w-full md:w-48 h-[170px]">
         <img
           src={imageUrl}
           alt={title}
-          className="w-full h-auto rounded-xl object-cover"
+          className="w-full h-full object-cover"
         />
       </div>
     </div>

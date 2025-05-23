@@ -243,7 +243,6 @@ async function pageToPostTransformer(
   ) {
     const authorId = properties.Author.relation[0].id;
     const authorInfo = allAuthors.find((a) => a.id === authorId);
-    console.log("authorInfo==>", authorInfo);
     if (authorInfo) {
       author = {
         id: authorInfo.id,

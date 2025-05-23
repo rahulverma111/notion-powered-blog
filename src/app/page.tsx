@@ -1,5 +1,6 @@
 import BlogPost from "@/components/BlogPost";
 import CustomTabs from "@/components/CustomTabs";
+import { HorizontalBorder } from "@/components/HorizontalBorder";
 import { getPosts } from "@/lib/notion";
 import { Post } from "@/lib/types";
 import Link from "next/link";
@@ -30,7 +31,6 @@ export default async function Home() {
 
       <div className="flex flex-col gap-y-5">
         {posts.map((post: Post) => (
-          // <div className="p-4" key={post.id} onClick={handleBlogClick}>
           <Link key={post.id} href={`/${post.id}`} className="p-4">
             <BlogPost
               title={post.title}
@@ -41,6 +41,7 @@ export default async function Home() {
               publishedDate="May 23, 2025"
               imageUrl="https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"
             />
+            {posts.indexOf(post) !== posts.length - 1 && <HorizontalBorder />}
           </Link>
           // </div>
         ))}

@@ -25,7 +25,7 @@ export default async function Home() {
 
   return (
     <main>
-      <CustomTabsClientWrapper posts={posts} />
+      <CustomTabsClientWrapper posts={posts} authors={authors} />
     </main>
   );
 }

@@ -9,7 +9,12 @@ export interface HeadingProps {
 
 const H1: React.FC<HeadingProps> = ({ styles, children }) => {
   return (
-    <Label className={twMerge("font-semibold  text-lg md:text-2xl", styles)}>
+    <Label
+      className={twMerge(
+        "font-semibold cursor-pointer text-lg md:text-2xl",
+        styles
+      )}
+    >
       {children}
     </Label>
   );
@@ -17,7 +22,12 @@ const H1: React.FC<HeadingProps> = ({ styles, children }) => {
 
 const H2: React.FC<HeadingProps> = ({ styles, children }) => {
   return (
-    <Label className={twMerge("font-semibold text-base md:text-xl", styles)}>
+    <Label
+      className={twMerge(
+        "font-semibold cursor-pointer text-base md:text-xl",
+        styles
+      )}
+    >
       {children}
     </Label>
   );

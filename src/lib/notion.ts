@@ -128,6 +128,56 @@ export async function getPostDetails(id: string) {
   }
 }
 
+export async function getAuthors({
+  pageSize = 25,
+  page = 1,
+  tag = null,
+}: {
+  pageSize?: number;
+  page?: number;
+  tag?: string | null;
+}) {
+  try {
+    const databaseId = process.env.NOTION_AUTHORS_DB_ID!;
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      page_size: 100,
+    });
+    const total = response.results.length;
+    const paginatedResponse = await notion.databases.query({
+      database_id: databaseId,
+      sorts: [
+        {
+          property: "Created time",
+          direction: "ascending",
+        },
+      ],
+      page_size: pageSize,
+      start_cursor:
+        page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
+    });
+
+    const authors = await Promise.all(
+      paginatedResponse.results
+        .filter(isFullPage)
+        .map(async (page: PageObjectResponse) => {
+          return await pageToAuthorTransformer(page);
+        })
+    );
+
+    return {
+      authors,
+      total,
+    };
+  } catch (e) {
+    console.error("Error fetching authors from Notion:", e);
+    return {
+      authors: [],
+      total: 0,
+    };
+  }
+}
+
 async function pageToPostTransformer(
   page: PageObjectResponse,
   includeContent = false
@@ -196,4 +246,61 @@ async function pageToPostTransformer(
   }
 
   return post;
+}
+
+type Author = {
+  id: string;
+  name: string;
+  bio: string;
+  email: string;
+  posts: string[]; // array of post page IDs
+  image: any;
+  createdAt: string;
+};
+
+async function pageToAuthorTransformer(
+  page: PageObjectResponse
+): Promise<Author> {
+  const { properties, created_time } = page;
+
+  const name =
+    properties.Name?.type === "title"
+      ? properties.Name.title[0]?.plain_text || "Unnamed"
+      : "Unnamed";
+
+  const bio =
+    properties.Bio?.type === "rich_text"
+      ? properties.Bio.rich_text[0]?.plain_text || ""
+      : "";
+
+  const email =
+    properties.Email?.type === "email" ? properties.Email.email || "" : "";
+
+  const posts =
+    properties.Posts?.type === "relation"
+      ? properties.Posts.relation.map((rel) => rel.id)
+      : [];
+
+  let image: string | null = null;
+  if (properties.Image?.type === "files" && properties.Image.files.length > 0) {
+    const file = properties.Image.files[0];
+
+    if (file.type === "external") {
+      image = file.external.url;
+    } else if (file.type === "file") {
+      image = file.file.url;
+    }
+  }
+
+  const author = {
+    id: page.id,
+    name,
+    bio,
+    email,
+    posts,
+    image,
+    createdAt: created_time,
+  };
+
+  return author;
 }

@@ -10,7 +10,7 @@ const SH1: React.FC<SubHeadingProps> = ({ styles, children }) => {
   return (
     <Label
       className={twMerge(
-        "font-semibold text-lg md:text-2xl text-brand-1",
+        "font-semibold cursor-pointer  text-lg md:text-2xl text-brand-1",
         styles
       )}
     >
@@ -21,7 +21,12 @@ const SH1: React.FC<SubHeadingProps> = ({ styles, children }) => {
 
 const SH2: React.FC<SubHeadingProps> = ({ styles, children }) => {
   return (
-    <Label className={twMerge("font-medium text-base text-brand-1", styles)}>
+    <Label
+      className={twMerge(
+        "font-medium cursor-pointer text-base text-brand-1",
+        styles
+      )}
+    >
       {children}
     </Label>
   );

@@ -1,3 +1,4 @@
+import AuthorCard from "@/components/AuthorCard";
 import Description from "@/components/Description";
 import Heading from "@/components/Heading";
 
@@ -28,6 +29,7 @@ export default function Page() {
           styles="text-gray-600"
         />
         <HorizontalBorder />
+        <AuthorCard heading="Dummy" subheading="fgh" imageUrl="" />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 import { H1 } from "./Heading";
 import { D2, D3 } from "./Description";
 import { AuthorProfile } from "./AuthorCard";
+import Image from "next/image";
 
 type BlogPostProps = {
   title: string;
@@ -33,10 +34,12 @@ export default function BlogPost({
       </div>
 
       <div className="w-full md:w-48 h-[170px]">
-        <img
+        <Image
           src={imageUrl}
           alt={title}
           className="w-full h-full object-cover"
+          width={200}
+          height={200}
         />
       </div>
     </div>

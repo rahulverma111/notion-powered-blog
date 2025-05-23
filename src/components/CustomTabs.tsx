@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -10,14 +9,16 @@ interface CustomTabsProps {
     title: string;
     component: React.ReactNode;
   }[];
+  activeIndex: number;
+  setActiveIndex: (index: number) => void;
 }
 
 export default function CustomTabs({
   tabsData,
   outerWrapperClass,
+  activeIndex,
+  setActiveIndex,
 }: CustomTabsProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-
   return (
     <div className={`${outerWrapperClass}`}>
       <div className="space-x-4 border-b border-black mb-4 pl-2">

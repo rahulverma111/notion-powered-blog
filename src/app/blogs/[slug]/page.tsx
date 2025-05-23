@@ -1,7 +1,17 @@
-import { getPostDetails } from "@/lib/notion";
+import { getPostDetails, getPosts } from "@/lib/notion";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600; // Revalidate every hour
+
+export async function generateStaticParams() {
+  // eslint-disable-next-line
+  const posts: any = await getPosts({ pageSize: 10 });
+
+  // eslint-disable-next-line
+  return posts.posts.map((post: { id: string }) => ({
+    slug: post.id,
+  }));
+}
 
 export default async function BlogPost({
   params,
@@ -9,8 +19,8 @@ export default async function BlogPost({
   params: { slug: string };
 }) {
   try {
-    console.log("params==>", params.slug);
-    const post = await getPostDetails(params.slug);
+    const { slug } = await params;
+    const post = await getPostDetails(slug);
 
     if (!post) {
       notFound();

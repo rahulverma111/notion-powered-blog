@@ -16,7 +16,7 @@ const n2m = new NotionToMarkdown({ notionClient: notion });
 
 export async function getPosts({
   pageSize = 25,
-  page = 1,
+  // page = 1,
   tag = null,
 }: {
   pageSize?: number;
@@ -144,8 +144,8 @@ export async function getPostDetails(id: string) {
 
 export async function getAuthors({
   pageSize = 25,
-  page = 1,
-}: {
+}: // page = 1,
+{
   pageSize?: number;
   page?: number;
 }) {

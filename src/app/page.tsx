@@ -12,6 +12,8 @@ async function getStaticProps() {
   const { posts } = await getPosts({ pageSize: 10 });
   const { authors } = await getAuthors({ pageSize: 100 });
 
+  console.log("posts==>", posts);
+
   return {
     props: {
       posts,

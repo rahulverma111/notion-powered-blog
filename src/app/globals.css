@@ -6,7 +6,7 @@
 
 @theme {
   --color-brand-0: var(--brand-0);
-  --colors-Gray-500: var(--colors-Gray-500);
+  --color-brand-1: var(--brand-1);
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -68,7 +68,7 @@
 @layer base {
   :root {
     --brand-0: #e2e2e2;
-    --colors-Gray-500: #667085;
+    --brand-1: #667085;
 
     --background: 0 0% 100%;
 

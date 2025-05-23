@@ -1,7 +1,6 @@
 import BlogPost from "@/components/BlogPost";
 import CustomTabsClientWrapper from "@/components/CustomTabsClientWrapper";
 import CustomTabs from "@/components/CustomTabs";
-import CustomTabsClientWrapper from "@/components/CustomTabsClientWrapper";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
 import { getAuthors, getPosts } from "@/lib/notion";
 import { Post } from "@/lib/types";

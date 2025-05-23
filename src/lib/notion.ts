@@ -99,6 +99,7 @@ export async function getPosts({
 export async function getPostDetails(id: string) {
   try {
     const page = await notion.pages.retrieve({ page_id: id });
+
     if (page?.object === "page" && "properties" in page) {
       const { html: contentHtml } = await NotionPageToHtml.convert(
         `https://www.notion.so/${id.replace(/-/g, "")}`,
@@ -111,8 +112,43 @@ export async function getPostDetails(id: string) {
         }
       );
 
-      const post = await pageToPostTransformer(page, false); // false because we’re handling content manually
+      const post = await pageToPostTransformer(page, false); // false because we're handling content manually
       post.content = contentHtml;
+
+      return post;
+    }
+  } catch (error) {
+    console.error("Error fetching post details:", error);
+    throw error;
+  }
+}
+
+export async function getAuthorDetails(id: string) {
+  try {
+    console.log("ID===>", id);
+    const page = await notion.pages.retrieve({ page_id: id });
+    console.log("PAGE-2===>", page);
+
+    if (page?.object === "page" && "properties" in page) {
+      // const { html: contentHtml } = await NotionPageToHtml.convert(
+      //   `https://www.notion.so/${id.replace(/-/g, "")}`,
+      //   {
+      //     excludeCSS: false, // include CSS (default)
+      //     excludeMetadata: true, // optionally exclude extra <meta> tags
+      //     excludeScripts: false, // optionally exclude scripts
+      //     excludeHeaderFromBody: true, // removes title/cover/icon from body
+      //     excludeTitleFromHead: true, // prevents <title> in head
+      //   }
+      // );
+
+      // console.log("A_1", html);
+
+      // console.log("page==>", page);
+
+      const post = await pageToAuthorTransformer(page); // false because we're handling content manually
+      // post.content = contentHtml;
+
+      console.log("POST-A===>", post);
 
       return post;
     }
@@ -167,6 +203,66 @@ export async function getAuthors({
     console.error("Error fetching authors from Notion:", e);
     return {
       authors: [],
+      total: 0,
+    };
+  }
+}
+
+export async function getAuthorPosts(
+  authorId: string,
+  { pageSize = 10, page = 1 } = {}
+) {
+  try {
+    const databaseId = process.env.NOTION_POSTS_DB_ID!;
+
+    // Create filter for author relation
+    const filter: QueryDatabaseParameters["filter"] = {
+      property: "Author",
+      relation: {
+        contains: authorId,
+      },
+    };
+
+    // Get total count first
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      filter,
+      page_size: 100, // Max to get a good count
+    });
+
+    const total = response.results.length;
+
+    // Get paginated results
+    const paginatedResponse = await notion.databases.query({
+      database_id: databaseId,
+      filter,
+      sorts: [
+        {
+          property: "Created time",
+          direction: "descending",
+        },
+      ],
+      page_size: pageSize,
+      start_cursor:
+        page > 1 ? response.results[(page - 1) * pageSize - 1]?.id : undefined,
+    });
+
+    const posts = await Promise.all(
+      paginatedResponse.results
+        .filter(isFullPage)
+        .map(async (page: PageObjectResponse) => {
+          return await pageToPostTransformer(page);
+        })
+    );
+
+    return {
+      posts,
+      total,
+    };
+  } catch (error) {
+    console.error("Error fetching author posts:", error);
+    return {
+      posts: [],
       total: 0,
     };
   }

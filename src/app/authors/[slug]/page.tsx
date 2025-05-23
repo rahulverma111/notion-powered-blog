@@ -3,83 +3,79 @@ import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
-import { getPosts } from "@/lib/notion";
+// import { getPosts } from "@/lib/notion";
+import { getAuthorDetails, getAuthorPosts } from "@/lib/notion";
+import { log } from "console";
+import { notFound } from "next/navigation";
 
-export async function generateStaticParams() {
-  // eslint-disable-next-line
-  const posts: any = await getPosts({ pageSize: 10 });
+// export async function generateStaticParams() {
+//   // eslint-disable-next-line
+//   // const posts: any = await getPosts({ pageSize: 10 });
+//   // // eslint-disable-next-line
+//   // return posts.posts.map((post: { id: string }) => ({
+//   //   slug: post.id,
+//   // }));
+// }
 
-  // eslint-disable-next-line
-  return posts.posts.map((post: { id: string }) => ({
-    slug: post.id,
-  }));
-}
-
-export default function Page({
+export default async function Page({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const authorDetails = {
-    authorName: "Avi Rajput",
-    description: "Writing is my passion which gives me wings to fly!",
-  };
+  // const [authorPosts, setAuthorPosts] = useState<any[]>([]);
+  const { slug } = await params;
+  const author = await getAuthorDetails(slug);
+  console.log("author", author);
+
+  let authorPosts: any[] = [];
+  if (author) {
+    const aPosts = await getAuthorPosts(author?.id);
+    console.log("authorPosts==>", aPosts.posts);
+    // setAuthorPosts(aPosts);
+    authorPosts = aPosts.posts;
+  }
+
+  if (!author) {
+    notFound();
+  }
+
+  // const authorDetails = {
+  //   authorName: "Avi Rajput",
+  //   description: "Writing is my passion which gives me wings to fly!",
+  // };
 
   return (
     <>
       <div className="max-w-full px-6   lg:max-w-4xl lg:mx-auto mb-6">
         <div className="w-full flex flex-col items-center space-y-3 my-8 ">
           <div className="h-[200px] w-[200px] rounded-full overflow-hidden bg-gray-600">
-            {/* <img
-              src="https://picsum.photos/id/237/200/300"
+            <img
+              src={author?.image}
               className="w-full h-full object-cover"
               alt="Rounded"
-            /> */}
+            />
           </div>
 
-          <H1 styles="">{authorDetails?.authorName}</H1>
-          <D1 styles="text-center">{authorDetails?.description}</D1>
+          <H1 styles="">{author?.name}</H1>
+          <D1 styles="text-center">{author?.bio}</D1>
         </div>
         <HorizontalBorder />
         <div>
-          <H1 styles="my-4">Latest Articles by Rahul</H1>
+          {/* <H1 styles="my-4">Latest Articles by {author?.name}</H1> */}
           <div className="flex flex-col space-y-4">
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />{" "}
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
-            <BlogPost
-              publishedDate={`Published on 23 May, 2025`}
-              authorName="Rahul Verma"
-              authorAvatarUrl="https://picsum.photos/id/237/200/300"
-              imageUrl="https://picsum.photos/id/237/200/300"
-              title="ChatGPT is shockingly bad at poker"
-              description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />
-            <HorizontalBorder />
+            {authorPosts.length > 0 &&
+              authorPosts.map((post) => (
+                <BlogPost
+                  publishedDate={post.date ?? post.date.split("T")[0]}
+                  authorName={author?.name}
+                  authorAvatarUrl={author?.image}
+                  imageUrl={post?.coverImage ?? "https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"}
+                  title={post?.title}
+                  description={post?.excerpt}
+                />
+              ))}
+            
+            {/* <HorizontalBorder /> */} */}
           </div>
         </div>
 

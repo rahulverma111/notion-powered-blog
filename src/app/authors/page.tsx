@@ -4,7 +4,6 @@ import { getAuthors } from "@/lib/notion";
 
 async function getStaticProps() {
   const { authors } = await getAuthors({ pageSize: 100 });
-
   return {
     params: { authors },
   };
@@ -35,6 +34,7 @@ export default async function AuthorsList() {
           return (
             <div key={index}>
               <AuthorCardLarge
+                uuid={item?.id}
                 heading={item?.name}
                 subheading={item?.bio}
                 imageUrl={item?.image}

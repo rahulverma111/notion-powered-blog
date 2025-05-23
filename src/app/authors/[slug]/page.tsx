@@ -20,8 +20,6 @@ export default function Page({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  console.log("params here---->", params);
-
   const authorDetails = {
     authorName: "Avi Rajput",
     description: "Writing is my passion which gives me wings to fly!",
@@ -90,12 +88,14 @@ export default function Page({
 
           <div className="grid grid-cols-1 space-y-4 sm:space-y-0 sm:grid-cols-2 mt-8">
             <AuthorCardCompact
+              uuid=""
               heading="Dummy"
               subheading="fgh"
               imageUrl=""
               blogCount={1}
             />
             <AuthorCardCompact
+              uuid=""
               heading="Dummy"
               subheading="fgh"
               imageUrl=""

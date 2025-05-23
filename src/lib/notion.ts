@@ -6,7 +6,8 @@ import type { Post } from "./types";
 import { slugify } from "./utils";
 
 export const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
+  // auth: process.env.NOTION_API_KEY,
+  auth: "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",
 });
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
@@ -47,7 +48,9 @@ export async function getPosts({
     }
 
     // Get total count first
-    const databaseId = process.env.NOTION_DATABASE_ID!;
+    // const databaseId = process.env.NOTION_DATABASE_ID!;
+    const databaseId = "1fcb7daf5ec38045afddd3f0a6421f3f";
+    console.log("databaseId==>", databaseId);
     const response = await notion.databases.query({
       database_id: databaseId,
       // filter,
@@ -61,10 +64,10 @@ export async function getPosts({
     // Now get the paginated results
     const paginatedResponse = await notion.databases.query({
       database_id: databaseId,
-      filter,
+      // filter,
       sorts: [
         {
-          property: "Created at",
+          property: "Created time",
           direction: "descending",
         },
       ],

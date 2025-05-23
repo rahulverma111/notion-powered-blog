@@ -211,4 +211,6 @@
 /* Optional: Apply as default font */
 body {
   font-family: "Courier Prime", monospace !important;
+  max-width: none !important;
+  margin: 0 !important;
 }

@@ -1,7 +1,6 @@
 import { getPosts } from "@/lib/notion";
 import { Post } from "@/lib/types";
 import Link from "next/link";
-import Image from "next/image";
 
 export const revalidate = 3600; // Revalidate every hour
 

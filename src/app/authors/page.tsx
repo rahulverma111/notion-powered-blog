@@ -1,4 +1,4 @@
-import { AuthorCardCompact, AuthorCardLarge } from "@/components/AuthorCard";
+import { AuthorCardLarge } from "@/components/AuthorCard";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
 
 export default async function AuthorsList() {

@@ -1,0 +1,61 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface CustomTabsProps {
+  outerWrapperClass?: string;
+  tabsData: {
+    title: string;
+    component: React.ReactNode;
+  }[];
+}
+
+export default function CustomTabs({
+  tabsData,
+  outerWrapperClass,
+}: CustomTabsProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className={`${outerWrapperClass}`}>
+      {/* Tab buttons */}
+      <div className="space-x-4 border-b border-black mb-4 pl-2">
+        {tabsData.map((tab, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`relative flex-1 text-sm font-medium py-2 text-gray-500 ${
+              activeIndex === index ? "font-semibold" : ""
+            } transition-colors`}
+          >
+            {tab.title}
+            {activeIndex === index && (
+              <motion.div
+                layoutId="underline"
+                className="absolute left-0 right-0 -bottom-[1px] h-[4px] bg-black "
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div className="relative min-h-[100px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="absolute w-full"
+          >
+            {tabsData[activeIndex]?.component}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}

@@ -9,6 +9,7 @@ import { isFullPage, type PageObjectResponse } from "@notionhq/client";
 
 export const notion = new Client({
   auth: process.env.NOTION_API_KEY,
+  auth: process.env.NOTION_API_KEY,
 });
 
 const n2m = new NotionToMarkdown({ notionClient: notion });
@@ -17,7 +18,13 @@ export async function getPosts({
   pageSize = 10,
   page = 1,
   tag = null,
+  pageSize = 10,
+  page = 1,
+  tag = null,
 }: {
+  pageSize?: number;
+  page?: number;
+  tag?: string | null;
   pageSize?: number;
   page?: number;
   tag?: string | null;
@@ -77,6 +84,7 @@ export async function getPosts({
     });
 
     console.log("paginatedResponse====>", paginatedResponse);
+    console.log("paginatedResponse====>", paginatedResponse);
 
     const posts = await Promise.all(
       paginatedResponse.results
@@ -105,7 +113,8 @@ export async function getPosts({
 export async function getPostDetails(id: string) {
   try {
     // First get the page details
-    const page = await notion.pages.retrieve({ page_id: id });
+    // eslint-disable-next-line
+    const page: any = await notion.pages.retrieve({ page_id: id });
     if (page.object === "page" && "properties" in page) {
       // Then get all blocks for this page
       const blocks = await notion.blocks.children.list({ block_id: id });

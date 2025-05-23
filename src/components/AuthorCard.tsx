@@ -1,7 +1,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { H2 } from "./Heading";
-import Subheading from "./Subheading";
+import { SH2 } from "./Subheading";
 
 interface AuthorCardProps {
   heading: string;
@@ -26,14 +26,10 @@ const AuthorCardCompact: React.FC<AuthorCardProps> = ({
       </div>
       <div>
         <H2 styles={"text-base lg:text-xl capitalize"}>{heading}</H2>
-        <Subheading
-          styles={"text-xs lg:text-lg capitalize"}
-          headerText={subheading}
-        />
-        <Subheading
+        <SH2 styles={"text-xs lg:text-lg capitalize"}>{subheading}</SH2>
+        <SH2
           styles={"text-xs lg:text-sm capitalize"}
-          headerText={`Published ${"  "} ${blogCount} blogs`}
-        />
+        >{`Published ${"  "} ${blogCount} blogs`}</SH2>
       </div>
     </div>
   );
@@ -55,14 +51,10 @@ const AuthorCardLarge: React.FC<AuthorCardProps> = ({
       </div>
       <div>
         <H2 styles={"text-base lg:text-2xl capitalize"}>{heading}</H2>
-        <Subheading
-          styles={"text-xs lg:text-lg capitalize"}
-          headerText={subheading}
-        />
-        <Subheading
+        <SH2 styles={"text-xs lg:text-lg capitalize"}>{subheading}</SH2>
+        <SH2
           styles={"text-xs lg:text-sm capitalize"}
-          headerText={`Published ${"  "} ${blogCount} blogs`}
-        />
+        >{`Published ${"  "} ${blogCount} blogs`}</SH2>
       </div>
     </div>
   );

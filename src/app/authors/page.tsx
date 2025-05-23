@@ -17,7 +17,7 @@ export default async function AuthorsList() {
     <>
       {data.map((item, index) => {
         return (
-          <>
+          <div key={index}>
             <AuthorCardLarge
               heading={item.authorName}
               subheading={"Writing is my passion which gives me wings to fly!"}
@@ -25,7 +25,7 @@ export default async function AuthorsList() {
               blogCount={1}
             />
             <HorizontalBorder styles="m-3" />
-          </>
+          </div>
         );
       })}
     </>

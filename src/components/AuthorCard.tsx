@@ -1,6 +1,8 @@
 import React from "react";
 import { Label } from "./ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Heading from "./Heading";
+import Subheading from "./Subheading";
 
 interface AuthorCardProps {
   heading: string;
@@ -12,13 +14,13 @@ interface AuthorCardProps {
 export default function AuthorCard({
   heading = "Rahul verma",
   subheading = "Writing is my passion which gives me wings to fly!",
-  imageUrl = null,
+  imageUrl = "",
   blogCount = 312,
 }: AuthorCardProps) {
   return (
     <div>
-      <Label htmlFor="heading">{heading}</Label>
-      <Label htmlFor="subheading">{heading}</Label>
+      <Heading headerText={heading} />
+      <Subheading headerText={subheading} />
       <Avatar>
         <AvatarImage src="https://github.com/shadcn.png" />
         <AvatarFallback></AvatarFallback>

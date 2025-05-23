@@ -1,7 +1,7 @@
 import { twMerge } from "tailwind-merge";
 import { Label } from "./ui/label";
 
-export default function Heading({
+export default function Subheading({
   headerText,
   styles,
 }: {
@@ -9,8 +9,6 @@ export default function Heading({
   styles?: string;
 }) {
   return (
-    <Label className={twMerge("font-bold text-2xl", styles)}>
-      {headerText}
-    </Label>
+    <Label className={twMerge("font-sm text-2xl", styles)}>{headerText}</Label>
   );
 }

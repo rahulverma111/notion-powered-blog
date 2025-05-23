@@ -5,9 +5,14 @@ import { SH2 } from "./Subheading";
 
 interface AuthorCardProps {
   heading: string;
-  subheading: string;
+  subheading?: string;
   imageUrl: string;
-  blogCount: number;
+  blogCount?: number;
+}
+
+interface AuthorProfileProps {
+  authorName: string;
+  imageUrl: string;
 }
 
 const AuthorCardCompact: React.FC<AuthorCardProps> = ({
@@ -60,4 +65,21 @@ const AuthorCardLarge: React.FC<AuthorCardProps> = ({
   );
 };
 
-export { AuthorCardCompact, AuthorCardLarge };
+const AuthorProfile: React.FC<AuthorProfileProps> = ({
+  authorName = "Rahul verma",
+  imageUrl = "",
+}: AuthorProfileProps) => {
+  return (
+    <div className="flex gap-4 items-start">
+      <div className="flex gap-4 items-center">
+        <Avatar className="w-10 h-10">
+          <AvatarImage src={imageUrl || "https://github.com/shadcn.png"} />
+          <AvatarFallback></AvatarFallback>
+        </Avatar>
+        <SH2>{authorName}</SH2>
+      </div>
+    </div>
+  );
+};
+
+export { AuthorCardCompact, AuthorCardLarge, AuthorProfile };

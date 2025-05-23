@@ -99,6 +99,37 @@ export async function getPosts({
   }
 }
 
+export async function getPostDetails(id: string) {
+  try {
+    // First get the page details
+    const page = await notion.pages.retrieve({ page_id: id });
+
+    // Then get all blocks for this page
+    const blocks = await notion.blocks.children.list({ block_id: id });
+
+    // Convert blocks to markdown
+    const mdBlocks = await n2m.blocksToMarkdown(blocks.results);
+    const mdString = n2m.toMarkdownString(mdBlocks);
+    console.log("mdString==>", mdString);
+
+    // Convert markdown to HTML
+    const processedContent = await remark()
+      .use(html, { sanitize: false })
+      .process(mdString.parent);
+
+    console.log("HEY_THERE==>", processedContent);
+
+    // Transform the page data
+    const post = await pageToPostTransformer(page, true);
+    post.content = processedContent.toString();
+
+    return post;
+  } catch (error) {
+    console.error("Error fetching post details:", error);
+    throw error;
+  }
+}
+
 async function pageToPostTransformer(
   page: any,
   includeContent = false

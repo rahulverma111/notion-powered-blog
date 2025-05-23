@@ -1,4 +1,4 @@
-import { getPostDetails, getPosts } from "@/lib/notion";
+import { getPostDetails, getPostAuthorDetails, getPosts } from "@/lib/notion";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600; // Revalidate every hour

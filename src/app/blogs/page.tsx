@@ -1,4 +1,4 @@
-import { getPosts } from "@/lib/notion";
+import { getPosts, getPostAuthorDetails } from "@/lib/notion";
 import { Post } from "@/lib/types";
 import Link from "next/link";
 

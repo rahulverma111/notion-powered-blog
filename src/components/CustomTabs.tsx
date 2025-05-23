@@ -1,47 +1,48 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface CustomTabsProps {
-  outerWrapperClass?: string;
-  tabsData: {
-    title: string;
-    component: React.ReactNode;
-  }[];
+	outerWrapperClass?: string;
+	tabsData: {
+		title: string;
+		component: React.ReactNode;
+	}[];
+	activeIndex: number;
+	setActiveIndex: (index: number) => void;
 }
 
 export default function CustomTabs({
-  tabsData,
-  outerWrapperClass,
+	tabsData,
+	outerWrapperClass,
+	activeIndex,
+	setActiveIndex,
 }: CustomTabsProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  return (
-    <div className={`${outerWrapperClass}`}>
-      <div className="space-x-4 border-b border-black mb-4 pl-2">
-        {tabsData.map((tab, index) => (
-          <button
-            key={index}
-            onClick={() => setActiveIndex(index)}
-            className={cn(
-              "relative flex-1 text-sm font-medium py-2",
-              activeIndex === index ? "font-semibold" : "",
-              "transition-colors"
-            )}
-          >
-            {tab.title}
-            {activeIndex === index && (
-              <motion.div
-                layoutId="underline"
-                className="absolute left-0 right-0 -bottom-[1px] h-[4px] bg-black "
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              />
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+	return (
+		<div className={`${outerWrapperClass}`}>
+			<div className="space-x-4 border-b border-black mb-4 pl-2">
+				{tabsData.map((tab, index) => (
+					<button
+						key={index}
+						onClick={() => setActiveIndex(index)}
+						className={cn(
+							"relative flex-1 text-sm font-medium py-2",
+							activeIndex === index ? "font-semibold" : "",
+							"transition-colors"
+						)}
+					>
+						{tab.title}
+						{activeIndex === index && (
+							<motion.div
+								layoutId="underline"
+								className="absolute left-0 right-0 -bottom-[1px] h-[4px] bg-black "
+								transition={{ type: "spring", stiffness: 500, damping: 30 }}
+							/>
+						)}
+					</button>
+				))}
+			</div>
+		</div>
+	);
 }

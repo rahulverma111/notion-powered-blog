@@ -1,5 +1,10 @@
 import React from "react";
+import { twMerge } from "tailwind-merge";
 
-export const HorizontalBorder = () => {
-  return <div className="w-full h-0.5 bg-gray-300"></div>;
+interface BoderProps {
+  styles?: string;
+}
+
+export const HorizontalBorder = ({ styles = "" }: BoderProps) => {
+  return <div className={twMerge("w-full h-0.5 bg-gray-300", styles)}></div>;
 };

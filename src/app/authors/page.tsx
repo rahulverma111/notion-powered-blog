@@ -1,25 +1,49 @@
-import { AuthorCardCompact } from "@/components/AuthorCard";
+import { AuthorCardCompact, AuthorCardLarge } from "@/components/AuthorCard";
+import { HorizontalBorder } from "@/components/HorizontalBorder";
+import { getAuthors } from "@/lib/notion";
+
+async function getStaticProps() {
+  const { authors } = await getAuthors({ pageSize: 100 });
+
+  return {
+    params: { authors },
+  };
+}
 
 export default async function AuthorsList() {
+  const { params } = await getStaticProps();
+  const { authors } = params;
+
+  console.log("authors here", authors);
+
   const data = [
     {
       authorName: "Rakshith",
       imageUrl: "",
     },
     {
-      authorName: "Rashith",
+      authorName: "Rakshith",
       imageUrl: "",
     },
   ];
 
-  return data.map((item) => {
-    return (
-      <AuthorCardCompact
-        heading={item.authorName}
-        subheading={"Subheading"}
-        imageUrl={item.imageUrl}
-        blogCount={1}
-      />
-    );
-  });
+  return (
+    <>
+      {authors &&
+        authors?.length > 0 &&
+        authors.map((item, index) => {
+          return (
+            <div key={index}>
+              <AuthorCardLarge
+                heading={item?.name}
+                subheading={item?.bio}
+                imageUrl={item?.image}
+                blogCount={item?.posts?.length}
+              />
+              <HorizontalBorder styles="m-3" />
+            </div>
+          );
+        })}
+    </>
+  );
 }

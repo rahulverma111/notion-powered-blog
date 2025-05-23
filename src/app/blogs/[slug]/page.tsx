@@ -7,7 +7,6 @@ export async function generateStaticParams() {
   // eslint-disable-next-line
   const posts: any = await getPosts({ pageSize: 10 });
 
-  // eslint-disable-next-line
   return posts.posts.map((post: { id: string }) => ({
     slug: post.id,
   }));
@@ -16,7 +15,7 @@ export async function generateStaticParams() {
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   try {
     const { slug } = await params;

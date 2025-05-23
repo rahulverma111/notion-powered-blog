@@ -19,30 +19,35 @@ export default function CustomTabs({
 	activeIndex,
 	setActiveIndex,
 }: CustomTabsProps) {
-	return (
-		<div className={`${outerWrapperClass}`}>
-			<div className="space-x-4 border-b border-black mb-4 pl-2">
-				{tabsData.map((tab, index) => (
-					<button
-						key={index}
-						onClick={() => setActiveIndex(index)}
-						className={cn(
-							"relative flex-1 text-sm font-medium py-2",
-							activeIndex === index ? "font-semibold" : "",
-							"transition-colors"
-						)}
-					>
-						{tab.title}
-						{activeIndex === index && (
-							<motion.div
-								layoutId="underline"
-								className="absolute left-0 right-0 -bottom-[1px] h-[4px] bg-black "
-								transition={{ type: "spring", stiffness: 500, damping: 30 }}
-							/>
-						)}
-					</button>
-				))}
-			</div>
-		</div>
-	);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <>
+      <div className={outerWrapperClass}>
+        <div className="space-x-4 border-b border-black mb-4 pl-2">
+          {tabsData.map((tab, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={cn(
+                "relative flex-1 text-sm font-medium py-2 cursor-pointer",
+                activeIndex === index ? "font-semibold" : "",
+                "transition-colors"
+              )}
+            >
+              {tab.title}
+              {activeIndex === index && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute left-0 right-0 -bottom-[1px] h-[4px] bg-black "
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+      {tabsData[activeIndex].component}
+    </>
+  );
 }

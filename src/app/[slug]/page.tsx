@@ -1,13 +1,11 @@
 import { getPostDetails, getPosts } from "@/lib/notion";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-  // eslint-disable-next-line
-  const posts: any = await getPosts({ pageSize: 10 });
-
-  // eslint-disable-next-line
+  const posts = await getPosts({ pageSize: 10 });
   return posts.posts.map((post: { id: string }) => ({
     slug: post.id,
   }));
@@ -21,7 +19,6 @@ export default async function BlogPost({
   try {
     const { slug } = await params;
     const post = await getPostDetails(slug);
-    console.log("POST==>", post);
 
     if (!post) {
       notFound();
@@ -30,12 +27,14 @@ export default async function BlogPost({
     return (
       <article className="container py-8 px-16">
         {post.coverImage && (
-          <div className="mb-8">
-            {/* <img
+          <div className="mb-8 border shadow-md rounded-lg">
+            <Image
               src={post.coverImage}
               alt={post.title}
-              className="w-full h-[400px] object-cover rounded-lg"
-            /> */}
+              className="w-full object-contain rounded-lg"
+              width={200}
+              height={200}
+            />
           </div>
         )}
 
@@ -64,7 +63,7 @@ export default async function BlogPost({
         )}
 
         <div
-          className="prose prose-lg dark:prose-invert max-w-none"
+          className="prose prose-lg dark:prose-invert mt-4"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>

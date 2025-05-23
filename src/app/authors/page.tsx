@@ -1,4 +1,5 @@
-import { AuthorCardCompact } from "@/components/AuthorCard";
+import { AuthorCardLarge } from "@/components/AuthorCard";
+import { HorizontalBorder } from "@/components/HorizontalBorder";
 
 export default async function AuthorsList() {
   const data = [
@@ -7,19 +8,26 @@ export default async function AuthorsList() {
       imageUrl: "",
     },
     {
-      authorName: "Rashith",
+      authorName: "Rakshith",
       imageUrl: "",
     },
   ];
 
-  return data.map((item) => {
-    return (
-      <AuthorCardCompact
-        heading={item.authorName}
-        subheading={"Subheading"}
-        imageUrl={item.imageUrl}
-        blogCount={1}
-      />
-    );
-  });
+  return (
+    <>
+      {data.map((item, index) => {
+        return (
+          <div key={index}>
+            <AuthorCardLarge
+              heading={item.authorName}
+              subheading={"Writing is my passion which gives me wings to fly!"}
+              imageUrl={item.imageUrl}
+              blogCount={1}
+            />
+            <HorizontalBorder styles="m-3" />
+          </div>
+        );
+      })}
+    </>
+  );
 }

@@ -2,15 +2,12 @@ import { AuthorCardCompact } from "@/components/AuthorCard";
 import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
+import { HorizontalBorder } from "@/components/HorizontalBorder";
 
 export default function Page() {
   const authorDetails = {
     authorName: "Avi Rajput",
     description: "Writing is my passion which gives me wings to fly!",
-  };
-
-  const HorizontalBorder = () => {
-    return <div className="w-full h-0.5 bg-gray-300"></div>;
   };
 
   return (
@@ -39,7 +36,8 @@ export default function Page() {
               imageUrl="https://picsum.photos/id/237/200/300"
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />{" "}
+            />
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -48,6 +46,7 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />{" "}
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -56,6 +55,7 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -64,6 +64,7 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />
+            <HorizontalBorder />
           </div>
         </div>
 

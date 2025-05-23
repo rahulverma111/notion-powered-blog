@@ -16,18 +16,19 @@ export async function generateStaticParams() {
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   try {
     const { slug } = await params;
     const post = await getPostDetails(slug);
+    console.log("POST==>", post);
 
     if (!post) {
       notFound();
     }
 
     return (
-      <article className="container mx-auto px-4 py-8">
+      <article className="container py-8 px-16">
         {post.coverImage && (
           <div className="mb-8">
             <img
@@ -63,7 +64,7 @@ export default async function BlogPost({
         )}
 
         <div
-          className="prose prose-lg max-w-none"
+          className="prose prose-lg dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>

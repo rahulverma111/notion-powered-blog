@@ -11,10 +11,10 @@ interface AuthorCardProps {
 
 export default function AuthorCard({
   heading = "Rahul verma",
-  subheading = "Writing is my passion which gives me wings to fly!",
-  imageUrl = null,
-  blogCount = 312,
-}: AuthorCardProps) {
+}: // subheading = "Writing is my passion which gives me wings to fly!",
+// imageUrl = "",
+// blogCount = 312,
+AuthorCardProps) {
   return (
     <div>
       <Label htmlFor="heading">{heading}</Label>

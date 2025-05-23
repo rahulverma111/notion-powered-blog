@@ -8,12 +8,7 @@ export interface DescriptionProps {
 
 const D1: React.FC<DescriptionProps> = ({ styles, children }) => {
   return (
-    <Label
-      className={twMerge(
-        "font-semibold text-lg md:text-2xl text-colors-Gray-500",
-        styles
-      )}
-    >
+    <Label className={twMerge("text-lg md:text-2xl text-brand-1", styles)}>
       {children}
     </Label>
   );
@@ -21,12 +16,7 @@ const D1: React.FC<DescriptionProps> = ({ styles, children }) => {
 
 const D2: React.FC<DescriptionProps> = ({ styles, children }) => {
   return (
-    <Label
-      className={twMerge(
-        "font-semibold text-base md:text-xl text-colors-Gray-500",
-        styles
-      )}
-    >
+    <Label className={twMerge("text-base md:text-xl text-brand-1", styles)}>
       {children}
     </Label>
   );
@@ -34,12 +24,7 @@ const D2: React.FC<DescriptionProps> = ({ styles, children }) => {
 
 const D3: React.FC<DescriptionProps> = ({ styles, children }) => {
   return (
-    <Label
-      className={twMerge(
-        "font-semibold text-sm md:text-xl text-colors-Gray-500",
-        styles
-      )}
-    >
+    <Label className={twMerge("text-xs md:text-sm text-brand-1", styles)}>
       {children}
     </Label>
   );

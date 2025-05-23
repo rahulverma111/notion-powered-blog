@@ -32,4 +32,17 @@ const D2: React.FC<DescriptionProps> = ({ styles, children }) => {
   );
 };
 
-export { D1, D2 };
+const D3: React.FC<DescriptionProps> = ({ styles, children }) => {
+  return (
+    <Label
+      className={twMerge(
+        "font-semibold text-sm md:text-xl text-colors-Gray-500",
+        styles
+      )}
+    >
+      {children}
+    </Label>
+  );
+};
+
+export { D1, D2, D3 };

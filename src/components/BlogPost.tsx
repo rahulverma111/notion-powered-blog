@@ -21,7 +21,7 @@ export default function BlogPost({
 	imageUrl,
 }: BlogPostProps) {
 	return (
-		<div className="flex flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card h-[170px]">
+		<div className="flex flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card">
 			<div className="flex-1">
 				<div className="pb-4">
 					<AuthorProfile authorName={authorName} imageUrl={authorAvatarUrl} />

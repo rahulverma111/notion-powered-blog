@@ -4,6 +4,8 @@ import { remark } from "remark";
 import html from "remark-html";
 import type { Post } from "./types";
 import { slugify } from "./utils";
+import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
+import { isFullPage, type PageObjectResponse } from "@notionhq/client";
 
 export const notion = new Client({
 	auth: process.env.NOTION_API_KEY,
@@ -32,7 +34,7 @@ export async function getPosts({
 		//     },
 		//   ],
 		// }
-		const filter: any = {
+		const filter: QueryDatabaseParameters["filter"] = {
 			and: [],
 		};
 
@@ -77,9 +79,11 @@ export async function getPosts({
 		console.log("paginatedResponse====>", paginatedResponse);
 
 		const posts = await Promise.all(
-			paginatedResponse.results.map(async (page) => {
-				return await pageToPostTransformer(page);
-			})
+			paginatedResponse.results
+				.filter(isFullPage) // Only pass full Page objects
+				.map(async (page: PageObjectResponse) => {
+					return await pageToPostTransformer(page);
+				})
 		);
 
 		console.log("posts==>", posts);
@@ -98,21 +102,37 @@ export async function getPosts({
 }
 
 async function pageToPostTransformer(
-	page: any,
+	page: PageObjectResponse,
 	includeContent = false
 ): Promise<Post> {
-	// Get page properties
 	const { properties } = page;
 
-	// Extract basic post data
-	const title = properties.Title?.title[0]?.plain_text || "Untitled";
-	const date = properties.Date?.date?.start || new Date().toISOString();
-	const excerpt = properties.Excerpt?.rich_text[0]?.plain_text || "";
-	const tags = properties.Tags?.multi_select?.map((tag: any) => tag.name) || [];
-	const slug = properties.Slug?.rich_text[0]?.plain_text || slugify(title);
+	const title =
+		properties.Title?.type === "title"
+			? properties.Title.title[0]?.plain_text || "Untitled"
+			: "Untitled";
 
-	// Get cover image if available
-	let coverImage = null;
+	const date =
+		properties.Date?.type === "date"
+			? properties.Date.date?.start || new Date().toISOString()
+			: new Date().toISOString();
+
+	const excerpt =
+		properties.Excerpt?.type === "rich_text"
+			? properties.Excerpt.rich_text[0]?.plain_text || ""
+			: "";
+
+	const tags =
+		properties.Tags?.type === "multi_select"
+			? properties.Tags.multi_select.map((tag) => tag.name)
+			: [];
+
+	const slug =
+		properties.Slug?.type === "rich_text"
+			? properties.Slug.rich_text[0]?.plain_text || slugify(title)
+			: slugify(title);
+
+	let coverImage: string | null = null;
 	if (page.cover) {
 		if (page.cover.type === "external") {
 			coverImage = page.cover.external.url;
@@ -121,7 +141,6 @@ async function pageToPostTransformer(
 		}
 	}
 
-	// Create post object
 	const post: Post = {
 		id: page.id,
 		title,
@@ -133,14 +152,11 @@ async function pageToPostTransformer(
 		content: "",
 	};
 
-	// If full content is requested, fetch and convert it
 	if (includeContent) {
 		try {
-			// Get page blocks and convert to markdown
 			const mdBlocks = await n2m.pageToMarkdown(page.id);
 			const mdString = n2m.toMarkdownString(mdBlocks);
 
-			// Convert markdown to HTML
 			const processedContent = await remark()
 				.use(html, { sanitize: false })
 				.process(mdString.parent);

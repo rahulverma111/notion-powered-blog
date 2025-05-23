@@ -105,22 +105,23 @@ export async function getPosts({
 export async function getPostDetails(id: string) {
   try {
     const page = await notion.pages.retrieve({ page_id: id });
+    if (page?.object === "page" && "properties" in page) {
+      const { html: contentHtml } = await NotionPageToHtml.convert(
+        `https://www.notion.so/${id.replace(/-/g, "")}`,
+        {
+          excludeCSS: false, // include CSS (default)
+          excludeMetadata: true, // optionally exclude extra <meta> tags
+          excludeScripts: false, // optionally exclude scripts
+          excludeHeaderFromBody: true, // removes title/cover/icon from body
+          excludeTitleFromHead: true, // prevents <title> in head
+        }
+      );
 
-    const { html: contentHtml } = await NotionPageToHtml.convert(
-      `https://www.notion.so/${id.replace(/-/g, "")}`,
-      {
-        excludeCSS: false, // include CSS (default)
-        excludeMetadata: true, // optionally exclude extra <meta> tags
-        excludeScripts: false, // optionally exclude scripts
-        excludeHeaderFromBody: true, // removes title/cover/icon from body
-        excludeTitleFromHead: true, // prevents <title> in head
-      }
-    );
+      const post = await pageToPostTransformer(page, false); // false because we’re handling content manually
+      post.content = contentHtml;
 
-    const post = await pageToPostTransformer(page, false); // false because we’re handling content manually
-    post.content = contentHtml;
-
-    return post;
+      return post;
+    }
   } catch (error) {
     console.error("Error fetching post details:", error);
     throw error;

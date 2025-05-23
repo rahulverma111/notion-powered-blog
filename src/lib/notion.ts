@@ -133,7 +133,6 @@ export async function getAuthors({
 }: {
 	pageSize?: number;
 	page?: number;
-	tag?: string | null;
 }) {
 	try {
 		const databaseId = process.env.NOTION_AUTHORS_DB_ID!;
@@ -217,6 +216,7 @@ async function pageToPostTransformer(
 	) {
 		const authorId = properties.Author.relation[0].id;
 		const authorInfo = allAuthors.find((a) => a.id === authorId);
+		console.log("authorInfo==>", authorInfo);
 		if (authorInfo) {
 			author = {
 				id: authorInfo.id,
@@ -272,7 +272,7 @@ type Author = {
 	bio: string;
 	email: string;
 	posts: string[]; // array of post page IDs
-	image: string;
+	image: string | null;
 	createdAt: string;
 };
 

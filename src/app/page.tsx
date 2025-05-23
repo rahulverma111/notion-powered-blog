@@ -15,7 +15,7 @@ export default function Home() {
 			<BlogPost
 				title="How to Build Scalable Systems"
 				description="Learn the principles and patterns to build scalable backend systems with real-world examples."
-				authorName="Rakshith"
+				authorName="Rakshith VS"
 				authorAvatarUrl="/avatars/rakshith.jpg"
 				publishedDate="May 23, 2025"
 				imageUrl="https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"

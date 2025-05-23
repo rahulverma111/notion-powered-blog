@@ -20,13 +20,11 @@ export default function BlogPost({
   imageUrl,
 }: BlogPostProps) {
   return (
-    <div className="flex flex-col md:flex-row items-start gap-6 p-6 border rounded-2xl shadow-sm bg-white dark:bg-card">
-      <div className="flex-1">
-        {/* Need to replace with shadcn avatar */}
+    <div className="flex flex-col-reverse md:flex-row items-start gap-6 p-6 bg-white dark:bg-card">
+      <div className="flex-1 gap-y-3">
         <div className="flex items-center gap-3 mb-4">
           <AuthorProfile authorName={authorName} imageUrl={authorAvatarUrl} />
         </div>
-
         <H1>{title}</H1>
         <D2>{description}</D2>
         <D3>{publishedDate}</D3>

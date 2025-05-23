@@ -6,6 +6,7 @@ import type { Post } from "./types";
 import { slugify } from "./utils";
 import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
 import { isFullPage, type PageObjectResponse } from "@notionhq/client";
+import NotionPageToHtml from "notion-page-to-html";
 
 export const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -14,7 +15,7 @@ export const notion = new Client({
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
 export async function getPosts({
-  pageSize = 10,
+  pageSize = 25,
   page = 1,
   tag = null,
 }: {
@@ -68,7 +69,7 @@ export async function getPosts({
       sorts: [
         {
           property: "Created time",
-          direction: "descending",
+          direction: "ascending",
         },
       ],
       page_size: pageSize,
@@ -103,30 +104,24 @@ export async function getPosts({
 
 export async function getPostDetails(id: string) {
   try {
-    // First get the page details
-    // eslint-disable-next-line
-    const page: any = await notion.pages.retrieve({ page_id: id });
+    const page = await notion.pages.retrieve({ page_id: id });
+    if (page?.object === "page" && "properties" in page) {
+      const { html: contentHtml } = await NotionPageToHtml.convert(
+        `https://www.notion.so/${id.replace(/-/g, "")}`,
+        {
+          excludeCSS: false, // include CSS (default)
+          excludeMetadata: true, // optionally exclude extra <meta> tags
+          excludeScripts: false, // optionally exclude scripts
+          excludeHeaderFromBody: true, // removes title/cover/icon from body
+          excludeTitleFromHead: true, // prevents <title> in head
+        }
+      );
 
-    // Then get all blocks for this page
-    const blocks = await notion.blocks.children.list({ block_id: id });
+      const post = await pageToPostTransformer(page, false); // false because we’re handling content manually
+      post.content = contentHtml;
 
-    // Convert blocks to markdown
-    const mdBlocks = await n2m.blocksToMarkdown(blocks.results);
-    const mdString = n2m.toMarkdownString(mdBlocks);
-    console.log("mdString==>", mdString);
-
-    // Convert markdown to HTML
-    const processedContent = await remark()
-      .use(html, { sanitize: false })
-      .process(mdString.parent);
-
-    console.log("HEY_THERE==>", processedContent);
-
-    // Transform the page data
-    const post = await pageToPostTransformer(page, true);
-    post.content = processedContent.toString();
-
-    return post;
+      return post;
+    }
   } catch (error) {
     console.error("Error fetching post details:", error);
     throw error;

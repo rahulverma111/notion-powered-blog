@@ -2,6 +2,7 @@ import { AuthorCardCompact } from "@/components/AuthorCard";
 import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
+import { HorizontalBorder } from "@/components/HorizontalBorder";
 
 export default function Page() {
   const authorDetails = {
@@ -9,13 +10,9 @@ export default function Page() {
     description: "Writing is my passion which gives me wings to fly!",
   };
 
-  const HorizontalBorder = () => {
-    return <div className="w-full h-0.5 bg-gray-300"></div>;
-  };
-
   return (
     <>
-      <div className="max-w-[200px] sm:max-w-sm md:max-w-lg lg:max-w-4xl mx-auto mb-6">
+      <div className="max-w-full px-6   lg:max-w-4xl lg:mx-auto mb-6">
         <div className="w-full flex flex-col items-center space-y-3 my-8 ">
           <div className="h-[200px] w-[200px] rounded-full overflow-hidden bg-gray-600">
             {/* <img
@@ -39,7 +36,8 @@ export default function Page() {
               imageUrl="https://picsum.photos/id/237/200/300"
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
-            />{" "}
+            />
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -48,6 +46,7 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />{" "}
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -56,6 +55,7 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />
+            <HorizontalBorder />
             <BlogPost
               publishedDate={`Published on 23 May, 2025`}
               authorName="Rahul Verma"
@@ -64,13 +64,14 @@ export default function Page() {
               title="ChatGPT is shockingly bad at poker"
               description="I’m impressed by large language models. So why can't they get the basics of poker right?"
             />
+            <HorizontalBorder />
           </div>
         </div>
 
         <div className="space-y-2 mt-20">
           <H1>More Authors</H1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 mt-8">
+          <div className="grid grid-cols-1 space-y-4 sm:space-y-0 sm:grid-cols-2 mt-8">
             <AuthorCardCompact
               heading="Dummy"
               subheading="fgh"

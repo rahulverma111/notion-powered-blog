@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="max-w-[200px] sm:max-w-sm md:max-w-lg lg:max-w-4xl mx-auto mb-6">
+      <div className="max-w-full px-6   lg:max-w-4xl lg:mx-auto mb-6">
         <div className="w-full flex flex-col items-center space-y-3 my-8 ">
           <div className="h-[200px] w-[200px] rounded-full overflow-hidden bg-gray-600">
             {/* <img
@@ -71,7 +71,7 @@ export default function Page() {
         <div className="space-y-2 mt-20">
           <H1>More Authors</H1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 mt-8">
+          <div className="grid grid-cols-1 space-y-4 sm:space-y-0 sm:grid-cols-2 mt-8">
             <AuthorCardCompact
               heading="Dummy"
               subheading="fgh"

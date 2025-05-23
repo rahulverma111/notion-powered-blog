@@ -6,6 +6,7 @@ import CustomTabs from "@/components/CustomTabs";
 import BlogPost from "@/components/BlogPost";
 import { Author, Post } from "@/lib/types";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
+import { AuthorCardLarge } from "./AuthorCard";
 
 interface Props {
   posts: Post[];
@@ -27,7 +28,26 @@ export default function CustomTabsClientWrapper({ posts, authors }: Props) {
       />
 
       {activeTab === 1 ? (
-        <div className="flex flex-col gap-y-5"></div>
+        <div className="flex flex-col gap-y-5">
+          {authors &&
+            authors?.length > 0 &&
+            authors.map((item, index) => {
+              return (
+                <div key={index}>
+                  <AuthorCardLarge
+                    uuid={item?.id}
+                    heading={item?.name}
+                    subheading={item?.bio}
+                    imageUrl={item?.image}
+                    blogCount={item?.posts?.length}
+                  />
+                  {index < posts.length - 1 && (
+                    <HorizontalBorder styles="m-3" />
+                  )}
+                </div>
+              );
+            })}
+        </div>
       ) : (
         <div className="flex flex-col gap-y-5">
           {posts.map((post: Post) => (
@@ -35,11 +55,14 @@ export default function CustomTabsClientWrapper({ posts, authors }: Props) {
               <BlogPost
                 title={post.title}
                 // description={post.excerpt}
-                description="Learn the principles and patterns to build scalable backend systems with real-world examples."
-                authorName="Rakshith"
-                authorAvatarUrl="/avatars/rakshith.jpg"
-                publishedDate="May 23, 2025"
-                imageUrl="https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"
+                description={post?.excerpt}
+                authorName={post?.author?.name}
+                authorAvatarUrl={post?.author?.image}
+                publishedDate={post?.date ?? post?.date.split("T")[0]}
+                imageUrl={
+                  post?.coverImage ??
+                  "https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"
+                }
               />
               {posts.indexOf(post) !== posts.length - 1 && <HorizontalBorder />}
             </Link>

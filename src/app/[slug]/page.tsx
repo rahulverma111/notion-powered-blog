@@ -5,74 +5,70 @@ import { notFound } from "next/navigation";
 export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
-	// eslint-disable-next-line
-	const posts: any = await getPosts({ pageSize: 10 });
-
-	// eslint-disable-next-line
-	return posts.posts.map((post: { id: string }) => ({
-		slug: post.id,
-	}));
+  const { posts } = await getPosts({ pageSize: 100 }); // Fetch all posts
+  return posts.map((post) => ({
+    slug: post.id,
+  }));
 }
 
-export default async function BlogPost({
-	params,
-}: {
-	params: Promise<{ slug: string }>;
-}) {
-	try {
-		const { slug } = await params;
-		const post = await getPostDetails(slug);
+type Props = {
+  params: { slug: string };
+};
 
-		if (!post) {
-			notFound();
-		}
+export default async function BlogPost({ params }: Props) {
+  try {
+    const post = await getPostDetails(params.slug);
 
-		return (
-			<article className="container py-8 px-16">
-				{post.coverImage && (
-					<div className="mb-8">
-						<Image
-							src={post.coverImage}
-							alt={post.title}
-							className="w-full h-[400px] object-cover rounded-lg"
-							width={200}
-							height={200}
-						/>
-					</div>
-				)}
+    if (!post) {
+      notFound();
+    }
 
-				<h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+    return (
+      <article className="container py-8 px-16">
+        {post.coverImage && (
+          <div className="mb-8">
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              className="w-full h-[400px] object-cover rounded-lg"
+              width={200}
+              height={200}
+            />
+          </div>
+        )}
 
-				<div className="flex gap-4 mb-8">
-					<time className="text-gray-600">
-						{new Date(post.date).toLocaleDateString()}
-					</time>
-					{post.tags.length > 0 && (
-						<div className="flex gap-2">
-							{post.tags.map((tag) => (
-								<span
-									key={tag}
-									className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
-								>
-									{tag}
-								</span>
-							))}
-						</div>
-					)}
-				</div>
+        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
 
-				{post.excerpt && (
-					<p className="text-xl text-gray-600 mb-8">{post.excerpt}</p>
-				)}
+        <div className="flex gap-4 mb-8">
+          <time className="text-gray-600">
+            {new Date(post.date).toLocaleDateString()}
+          </time>
+          {post.tags.length > 0 && (
+            <div className="flex gap-2">
+              {post.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
-				<div
-					className="prose prose-lg dark:prose-invert max-w-none"
-					dangerouslySetInnerHTML={{ __html: post.content }}
-				/>
-			</article>
-		);
-	} catch (error) {
-		console.error("Error fetching post:", error);
-		notFound();
-	}
+        {post.excerpt && (
+          <p className="text-xl text-gray-600 mb-8">{post.excerpt}</p>
+        )}
+
+        <div
+          className="prose prose-lg dark:prose-invert max-w-none"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+      </article>
+    );
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    notFound();
+  }
 }

@@ -3,103 +3,87 @@ import BlogPost from "@/components/BlogPost";
 import { D1 } from "@/components/Description";
 import { H1 } from "@/components/Heading";
 import { HorizontalBorder } from "@/components/HorizontalBorder";
-// import { getPosts } from "@/lib/notion";
-import { getAuthorDetails, getAuthorPosts } from "@/lib/notion";
+import { getAuthors, getAuthorDetails, getAuthorPosts } from "@/lib/notion";
 import { log } from "console";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
-// export async function generateStaticParams() {
-//   // eslint-disable-next-line
-//   // const posts: any = await getPosts({ pageSize: 10 });
-//   // // eslint-disable-next-line
-//   // return posts.posts.map((post: { id: string }) => ({
-//   //   slug: post.id,
-//   // }));
-// }
+export const revalidate = 3600; // Revalidate every hour
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  // const [authorPosts, setAuthorPosts] = useState<any[]>([]);
-  const { slug } = await params;
-  const author = await getAuthorDetails(slug);
-  console.log("author", author);
+export async function generateStaticParams() {
+  const { authors } = await getAuthors({ pageSize: 100 });
+  return authors.map((author) => ({
+    slug: author.id,
+  }));
+}
 
-  let authorPosts: any[] = [];
-  if (author) {
-    const aPosts = await getAuthorPosts(author?.id);
-    console.log("authorPosts==>", aPosts.posts);
-    // setAuthorPosts(aPosts);
-    authorPosts = aPosts.posts;
-  }
+type Props = {
+  params: { slug: string };
+};
 
-  if (!author) {
-    notFound();
-  }
+export default async function AuthorPage({ params }: Props) {
+  try {
+    const author = await getAuthorDetails(params.slug);
+    if (!author) {
+      notFound();
+    }
 
-  // const authorDetails = {
-  //   authorName: "Avi Rajput",
-  //   description: "Writing is my passion which gives me wings to fly!",
-  // };
+    const { posts } = await getAuthorPosts(params.slug);
 
-  return (
-    <>
-      <div className="max-w-full px-6   lg:max-w-4xl lg:mx-auto mb-6">
-        <div className="w-full flex flex-col items-center space-y-3 my-8 ">
-          <div className="h-[200px] w-[200px] rounded-full overflow-hidden bg-gray-600">
-            <img
-              src={author?.image}
-              className="w-full h-full object-cover"
-              alt="Rounded"
-            />
-          </div>
-
-          <H1 styles="">{author?.name}</H1>
-          <D1 styles="text-center">{author?.bio}</D1>
-        </div>
-        <HorizontalBorder />
-        <div>
-          {/* <H1 styles="my-4">Latest Articles by {author?.name}</H1> */}
-          <div className="flex flex-col space-y-4">
-            {authorPosts.length > 0 &&
-              authorPosts.map((post) => (
-                <BlogPost
-                  publishedDate={post.date ?? post.date.split("T")[0]}
-                  authorName={author?.name}
-                  authorAvatarUrl={author?.image}
-                  imageUrl={post?.coverImage ?? "https://fastly.picsum.photos/id/237/536/354.jpg?hmac=i0yVXW1ORpyCZpQ-CknuyV-jbtU7_x9EBQVhvT5aRr0"}
-                  title={post?.title}
-                  description={post?.excerpt}
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-12">
+          <div className="flex items-center gap-6 mb-6">
+            {author.image && (
+              <div className="relative w-24 h-24 rounded-full overflow-hidden">
+                <Image
+                  src={author.image}
+                  alt={author.name}
+                  fill
+                  className="object-cover"
                 />
-              ))}
-            
-            {/* <HorizontalBorder /> */} */}
+              </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold mb-2">{author.name}</h1>
+              {author.email && <p className="text-gray-600">{author.email}</p>}
+            </div>
           </div>
+          {author.bio && <p className="text-lg text-gray-700">{author.bio}</p>}
         </div>
 
-        <div className="space-y-2 mt-20">
-          <H1>More Authors</H1>
-
-          <div className="grid grid-cols-1 space-y-4 sm:space-y-0 sm:grid-cols-2 mt-8">
-            <AuthorCardCompact
-              uuid=""
-              heading="Dummy"
-              subheading="fgh"
-              imageUrl=""
-              blogCount={1}
-            />
-            <AuthorCardCompact
-              uuid=""
-              heading="Dummy"
-              subheading="fgh"
-              imageUrl=""
-              blogCount={1}
-            />
-          </div>
+        <div className="grid gap-6">
+          <h2 className="text-2xl font-semibold mb-4">
+            Posts by {author.name}
+          </h2>
+          {posts.map((post) => (
+            <Link
+              key={post.id}
+              href={`/${post.id}`}
+              className="border p-4 rounded-lg hover:shadow-lg transition-shadow"
+            >
+              <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+              {post.excerpt && (
+                <p className="text-gray-600 mb-3">{post.excerpt}</p>
+              )}
+              <div className="flex gap-2">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
-    </>
-  );
+    );
+  } catch (error) {
+    console.error("Error fetching author:", error);
+    notFound();
+  }
 }

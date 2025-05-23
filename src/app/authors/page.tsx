@@ -15,17 +15,6 @@ export default async function AuthorsList() {
 
   console.log("authors here", authors);
 
-  const data = [
-    {
-      authorName: "Rakshith",
-      imageUrl: "",
-    },
-    {
-      authorName: "Rakshith",
-      imageUrl: "",
-    },
-  ];
-
   return (
     <>
       {authors &&
